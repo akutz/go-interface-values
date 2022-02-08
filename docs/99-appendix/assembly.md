@@ -70,7 +70,7 @@ To learn more about the `CALL` instruction and procedures, please refer to:
 
 The assembly for x86 and amd64 both define the [`CALL`](https://www.felixcloutier.com/x86/call) instruction. However, [ARM assembly](https://developer.arm.com/documentation/ddi0602/2021-12/?lang=en) does _not_ define a `CALL` instruction, despite it appearing in the assembly for Go sources in this project when they are compiled on an M1 Macbook. What gives?
 
-What was likely an attempt to maintain naming convention consistency in Go assembly across different processor architectures, Go renames the ARM assembly instruction [`BLR`](https://developer.arm.com/documentation/ddi0602/2021-12/Base-Instructions/BLR--Branch-with-Link-to-Register-?lang=en) (_branch with link to register_) to `CALL`. Both instructions call a procedure (x86) or subroutine (ARM) at a given address, so for all intents and purposes they have semantically similar.
+What was likely an attempt to maintain naming convention consistency in Go assembly across different processor architectures, Go renames the ARM assembly instruction [`BLR`](https://developer.arm.com/documentation/ddi0602/2021-12/Base-Instructions/BLR--Branch-with-Link-to-Register-?lang=en) (_branch with link to register_) to `CALL`. Both instructions call a procedure (x86) or subroutine (ARM) at a given address, so for all intents and purposes they behave semantically similar.
 
 To learn more about the `CALL` instruction and Go on ARM, please refer to:
 

@@ -82,7 +82,7 @@ int64
 int64
 ```
 
-In fact, there is something else interesting about the underlying types -- they are share across all interfaces. Check out this example ([Golang playground](https://go.dev/play/p/ewZtZafue19)):
+In fact, there is something else interesting about the underlying types -- they are shared across all interfaces. Check out this example ([Golang playground](https://go.dev/play/p/ewZtZafue19)):
 
 ```go
 package main
@@ -109,7 +109,7 @@ Huh, it looks like there is some duplicate information. Notice how the addresses
 * **`0x459d80`**: type address for `int32(3)` and `int32(5)`
 * **`0x459dc0`**: type address for `int64(3)` and `int64(5)`
 
-This is because type information is global and is shared for all values stored in interfaces. However, are...are the addresses for the values _also_ duplicated -- across _type_!?
+This is because type information is global and is shared for all values stored in interfaces. However, are the addresses for the values _also_ shared -- across _type_!?
 
 * **`0x476598`**: value address for `int32(3)` and `int64(3)`
 * **`0x4765a0`**: value address for `int32(5)` and `int64(5)`

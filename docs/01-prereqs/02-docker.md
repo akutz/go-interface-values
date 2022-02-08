@@ -58,7 +58,7 @@ docker run -it --rm go-interface-values go test -v ./examples/
 
 ### Mount repository
 
-Alternatively, it is also possible to run the examples cloned on your local filesystem using the Docker image. This has two benefits:
+Alternatively, it is also possible to run the examples using the Docker image and this repository cloned to your local filesystem. This has two benefits:
 
 * The examples will be up-to-date
 * It is easier to capture file output from the examples such as profiles

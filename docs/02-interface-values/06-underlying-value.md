@@ -5,7 +5,7 @@ Last time on _Go interface values_:
 * Go interfaces are really two `uintptr` values that address the underlying type and value stored in the interface
 * The address of the type points to an internal Go type where an equivalent to a `reflect.Kind` value is stored
 * Type information is global and shared by all values stored in interfaces
-* The address of the value may sometimes be duplicated even across distinct types such as `int32` and `int64`?
+* The address of the value may sometimes be shared even across distinct types such as `int32` and `int64`?
 
 Okay, now that we are all caught up, let's take a quick look at the example from the previous page ([Golang playground](https://go.dev/play/p/ewZtZafue19)):
 
