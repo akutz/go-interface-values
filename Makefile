@@ -142,9 +142,13 @@ asm-docker: ## Print asm table w/ docker
 ## --------------------------------------
 ## Clean
 ## --------------------------------------
+FILE_EXT_TO_CLEAN := .a .o .out .profile .test
+FIND_EXT_TO_CLEAN := $(foreach e,$(FILE_EXT_TO_CLEAN),-name '*$e'$(if $(filter-out $e,$(lastword $(FILE_EXT_TO_CLEAN))), -or,))
+
 .PHONY: clean
 clean: ## Clean up artifacts
-	@find . -type f \( -name '*.a' -or -name '*.o' -or -name '*.test' \) -delete
+	@find . -type f \( $(FIND_EXT_TO_CLEAN) \) -delete
+	@go clean -i -testcache ./...
 
 
 ## --------------------------------------
