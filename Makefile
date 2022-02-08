@@ -51,6 +51,11 @@ help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 
+# DOCKER_TARGETS is a list of targets that will have the -docker
+# option to run in the container.
+DOCKER_TARGETS := asm bench examples sizes test
+
+
 ## --------------------------------------
 ## Images
 ## --------------------------------------
@@ -94,21 +99,44 @@ generate: ## Generate the benchmarks
 ## --------------------------------------
 ## Testing
 ## --------------------------------------
-.PHONY: test-all
-test-all: ## Run all tests
+RUN_IN_DOCKER := docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
+
+.PHONY: test
+test: ## Run tests
 	go test -v ./...
+test-docker: ## Run tests w/ docker
 
-.PHONY: test-all-docker
-test-all-docker: ## Run all tests in the container
-	docker run $(IMAGE_RUN_FLAGS) $(IMAGE) make test-all
-
-.PHONY: test-examples
-test-examples: ## Run all examples
+.PHONY: examples
+examples: ## Run examples
 	go test -v ./examples/...
+examples-docker: ## Run examples w/ docker
 
-.PHONY: test-examples-docker
-test-examples-docker: ## Run all examples in the container
-	docker run $(IMAGE_RUN_FLAGS) $(IMAGE) make test-examples
+.PHONY: sizes
+sizes: ## Print sizes of types
+	go test -v ./benchmarks
+sizes-docker: ## Print sizes of types w/ docker
+
+.PHONY: bench
+bench: ## Run benchmarks
+	go test \
+	  -bench BenchmarkMem \
+	  -run Mem -benchmem \
+	  -count 1 \
+	  -benchtime 1000x \
+	  -v \
+	  ./benchmarks | \
+	python3 hack/b2md.py
+bench-docker: ## Run benchmarks w/ docker
+
+.PHONY: asm
+asm: ## Print asm table
+	cd benchmarks && \
+	go tool compile \
+	  -S \
+	  -wb=false \
+	  iface_test.go mem_test.go types_test.go | \
+	python3 ../hack/asm2md.py
+asm-docker: ## Print asm table w/ docker
 
 
 ## --------------------------------------
@@ -117,3 +145,13 @@ test-examples-docker: ## Run all examples in the container
 .PHONY: clean
 clean: ## Clean up artifacts
 	@find . -type f \( -name '*.a' -or -name '*.o' -or -name '*.test' \) -delete
+
+
+## --------------------------------------
+## Meta
+## --------------------------------------
+# Set up the docker targets.
+DOCKER_TARGETS := $(addsuffix -docker,$(DOCKER_TARGETS))
+.PHONY: $(DOCKER_TARGETS)
+$(DOCKER_TARGETS):
+	$(RUN_IN_DOCKER) make $(subst -docker,,$@)

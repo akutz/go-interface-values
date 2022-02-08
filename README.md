@@ -46,7 +46,7 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 * [**`hack/`**](./hack)
   * [**`asm2md.py`**](./hack/asm2md.py): parses the output of `go tool compile -S -wb=false *.go` and produces a markdown table
   * [**`b2md.py`**](./hack/b2md.py): parses the output of `go test -bench BenchmarkMem -run Mem -benchmem -count 1 -benchtime 1000x -v` and produces a markdown table 
-  * [**`gen.py`**](./hack/gen.py): generates [`mem_test.go`](mem_test.go), [`print_test.go`](print_test.go), and [`types_test.go`](types_test.go)
+  * [**`gen.py`**](./hack/gen.py): generates [`./benchmarks/mem_test.go`](./benchmarks/mem_test.go), [`./benchmarks/print_test.go`](./benchmarks/print_test.go), and [`./benchmarks/types_test.go`](./benchmarks/types_test.go)
 
 
 ## Links

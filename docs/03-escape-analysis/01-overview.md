@@ -28,4 +28,4 @@ Please keep reading to find out when variables leak, escape, and are moved to th
 
 ---
 
-Next: [Leak](./0-leak.md)
+Next: [Leak](./02-leak.md)
