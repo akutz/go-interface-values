@@ -17,7 +17,7 @@ fmt.Println(x + y.(int64))
 
 However, the previous page asked the following question: _How do we know the type assertion only worked because the literal value of `2` is a valid value for the type `int64`?_
 
-One way to answer the quesiton is by attempting to assert `y` is a `string` ([Golang playground](https://go.dev/play/p/jEqgcZWXKH9)):
+One way to answer the question is by attempting to assert `y` is a `string` ([Golang playground](https://go.dev/play/p/jEqgcZWXKH9)):
 
 ```go
 var s string

@@ -80,7 +80,7 @@ At the end there will be a file in the current, local directory named `profile00
 
 ### Dev container
 
-Alternatively, it is also possible to run the examples through opening the cloned reposity in a VS Code devcontainer:
+Alternatively, it is also possible to run the examples through opening the cloned repository in a VS Code devcontainer:
 
 1. To get started, please install the extension `Remote - Containers` by Microsoft (ms-vscode-remote.remote-containers). 
 1. Open up your Command Palette and type or select the command `Remote-Containers: Reopen in Container`.

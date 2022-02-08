@@ -44,7 +44,7 @@ func main() {
 }
 ```
 
-The above program produce outputs similar, but not identical, to:
+The above program produces outputs similar, but not identical, to:
 
 ```bash
 (0x486920,0x4b1f88)

@@ -1,6 +1,6 @@
 # Copy on store
 
-The examples have gotten pretty complex, but that has been necessary in order to ask this question: _What is being assigned to `x` in the following example?_
+The examples have gotten pretty complex, but that has been necessary in order to ask this question: _What is being assigned to `y` in the following example?_
 
 ```go
 var x int64
