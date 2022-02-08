@@ -4,7 +4,7 @@ This is a reference for the assembly found in this repository:
 
 * [**Why are all of the operands inverted for `MOV` and other instructions?**](#why-are-all-of-the-operands-inverted-for-mov-and-other-instructions)
 * [**What does the `Q` suffix for instructions like `MOVQ` and `LEAQ` mean?**](#what-does-the-q-suffix-for-instructions-like-movq-and-leaq-mean)
-* [**What is the x86 assembly instruction `CALL` actually calling?**](#what-is-the-x86-assembly-instruction-actually-calling)
+* [**What is the x86 assembly instruction `CALL` actually calling?**](#what-is-the-x86-assembly-instruction-call-actually-calling)
 * [**Where is the `CALL` instruction in ARM assembly?**](#where-is-the-call-instruction-in-arm-assembly)
 
 
