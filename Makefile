@@ -103,17 +103,17 @@ RUN_IN_DOCKER := docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
 
 .PHONY: test
 test: ## Run tests
-	go test -v ./...
+	go test -count 1 -v ./...
 test-docker: ## Run tests w/ docker
 
 .PHONY: examples
 examples: ## Run examples
-	go test -v ./examples/...
+	go test -count 1 -v ./examples/...
 examples-docker: ## Run examples w/ docker
 
 .PHONY: sizes
 sizes: ## Print sizes of types
-	go test -v ./benchmarks
+	go test -count 1 -v ./benchmarks
 sizes-docker: ## Print sizes of types w/ docker
 
 .PHONY: bench

@@ -1,6 +1,6 @@
 # Overview
 
-Go tries really, _really_ hard to keep memory on the stack where possible. Memory allocated on the stack relieves pressure on the garbage collector as the memory is cleaned up once the stack on which it is allocated no longer exists.
+Go tries really, [_really_](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/escape.go) hard to keep memory on the stack where possible. Memory allocated on the stack relieves pressure on the garbage collector as the memory is cleaned up once the stack on which it is allocated no longer exists.
 
 It is possible to see which variables end up on the heap by using the compiler flag `-m` when building (or testing) Go code. For example, let's build the program at [`./examples/cmd/lem/main.go`](../../examples/cmd/lem/main.go) with the the following command:
 

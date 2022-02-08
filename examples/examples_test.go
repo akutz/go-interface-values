@@ -32,16 +32,9 @@ func ExampleNoEscape() {
 func ExampleEscape() {
 	compile("escape.go")
 	// Output:
-	// escape.go:24:2: x escapes to heap
+	// escape.go:24:4: x escapes to heap
 	// escape.go:28:10: new(int64) escapes to heap
 	// escape.go:35:10: new(int64) escapes to heap
-}
-
-func ExampleLeak() {
-	compile("leak.go")
-	// Output:
-	// leak.go:21:18: leaking param: p
-	// leak.go:26:18: leaking param: p to result ~r0 level=0
 }
 
 func ExampleMove() {
