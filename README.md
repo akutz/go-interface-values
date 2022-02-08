@@ -54,6 +54,7 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 * [**ARM developer documentation**](https://developer.arm.com/documentation/ddi0602/2021-12/?lang=en)
 * [**x86 and amd64 instruction set**](https://www.felixcloutier.com/x86/index.html)
 * [**A quick guide to Go assembly**](https://go.dev/doc/asm)
+* [**Logging, interfaces, and allocation**](https://commaok.xyz/post/interface-allocs/)
 
 
 ## Appendix

@@ -5,6 +5,14 @@ Through type assertion we have ascertained that storing a value in interface pre
 * an address to the type stored in the interface
 * an address to the value stored in the interface
 
+---
+
+:wave: **The last word**
+
+There used to be an optimization where a value stored in an interface was stored directly in the last/second word as long as the size of that value's type was smaller than a `uintptr`. However, this optimization was removed in [github.com/golang/go#8405](https://golang.org/issue/8405) due to the introduction of concurrent garbage collection.
+
+---
+
 There are a couple of ways to access this information:
 
 * The built-in [`println`](https://github.com/golang/go/blob/d588f487703e773ba4a2f0a04f2d4141610bff6b/src/builtin/builtin.go#L261-L266) function
