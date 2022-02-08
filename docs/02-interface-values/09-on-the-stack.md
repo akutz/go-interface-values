@@ -25,13 +25,15 @@ With that in mind, let's get started:
 1. Build the `examples` package with compiler flags to prevent write barriers (`-wb=false`), inlining (`-l`), and optimization (`-N`). You would never do this in producton, but it makes walking the assembly easier:
 
     ```bash
-    go build -gcflags "-wb=false -l -N" -o examples.a ./examples
+    docker run -it --rm -v "$(pwd):/tmp/pkg" go-interface-values \
+      go build -gcflags "-wb=false -l -N" -o /tmp/pkg/examples.a ./examples
     ```
 
 1. Dump the symbol `ifaceonthestack$` from the newly built archive:
 
     ```bash
-    go tool objdump -s ifaceonthestack$ examples.a
+    docker run -it --rm -v "$(pwd):/tmp/pkg" go-interface-values \
+      go tool objdump -s ifaceonthestack$ /tmp/pkg/examples.a
     ```
 
 ---
@@ -41,7 +43,8 @@ With that in mind, let's get started:
 Please note it is also possible to dump the assembly for a single Go source file:
 
 ```bash
-go tool compile -wb=false -l -N -S ./examples/ifaceonthestack.go
+docker run -it --rm go-interface-values \
+  go tool compile -wb=false -l -N -S ./examples/ifaceonthestack.go
 ```
 
 However I [have found](https://gophers.slack.com/archives/C029RQSEE/p1644033676178239) the Go compiler will produce different assembly based on `go tool compile` and actually packing the archive with `go build`. In order to be more aligned with package archive assembly, this page uses `go build`.

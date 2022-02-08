@@ -106,6 +106,10 @@ test-all-docker: ## Run all tests in the container
 test-examples: ## Run all examples
 	go test -v ./examples/...
 
+.PHONY: test-examples-docker
+test-examples-docker: ## Run all examples in the container
+	docker run $(IMAGE_RUN_FLAGS) $(IMAGE) make test-examples
+
 
 ## --------------------------------------
 ## Clean
