@@ -1,0 +1,7 @@
+{
+	"name": "Go interface values DevContainer",
+	"context": "..",
+	"dockerFile": "../Dockerfile",
+	"settings": {},
+	"extensions": ["golang.go"]
+}

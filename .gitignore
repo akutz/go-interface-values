@@ -1,0 +1,13 @@
+*.a
+*.o
+*.bin
+*.out
+*.test
+*.svg
+*.pid
+*.class
+*.profile
+.vscode/
+bin/
+obj/
+
