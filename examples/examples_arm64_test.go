@@ -16,6 +16,14 @@ limitations under the License.
 
 package examples_test
 
+func ExampleEscape() {
+	compile("escape.go")
+	// Output:
+	// escape.go:24:2: x escapes to heap
+	// escape.go:28:10: new(int64) escapes to heap
+	// escape.go:35:10: new(int64) escapes to heap
+}
+
 func ExampleLeak() {
 	compile("leak.go")
 	// Output:
