@@ -100,25 +100,28 @@ generate: ## Generate the benchmarks
 ## Testing
 ## --------------------------------------
 RUN_IN_DOCKER := docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
+GCFLAGS := -gcflags "-l -N"
 
 .PHONY: test
 test: ## Run tests
-	go test -count 1 -v ./...
+	go version && go test $(GCFLAGS) -run "^Test" -count 1 -v ./...
 test-docker: ## Run tests w/ docker
 
 .PHONY: examples
 examples: ## Run examples
-	go test -count 1 -v ./examples/...
+	go version && go test $(GCFLAGS) -run "^Example" -count 1 -v ./examples/...
 examples-docker: ## Run examples w/ docker
 
 .PHONY: sizes
 sizes: ## Print sizes of types
-	go test -count 1 -v ./benchmarks
+	go version && go test $(GCFLAGS) -count 1 -v ./benchmarks
 sizes-docker: ## Print sizes of types w/ docker
 
 .PHONY: bench
 bench: ## Run benchmarks
+	go version && \
 	go test \
+	  $(GCFLAGS) \
 	  -bench BenchmarkMem \
 	  -run Mem -benchmem \
 	  -count 1 \
@@ -130,6 +133,7 @@ bench-docker: ## Run benchmarks w/ docker
 
 .PHONY: asm
 asm: ## Print asm table
+	go version && \
 	cd benchmarks && \
 	go tool compile \
 	  -S \
