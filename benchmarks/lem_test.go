@@ -185,6 +185,37 @@ func TestLem(t *testing.T) {
 								},
 							},
 						},
+						{
+							name: "uint8",
+							child: []testCaseForBenchmark{
+								{
+									name: "val",
+									child: []testCaseForBenchmark{
+										{
+											name: "nzd",
+											fvnc: benchIfaceInLoopUint8,
+										},
+										{
+											name: "zed",
+											fvnc: benchIfaceInLoopUint8Zed,
+										},
+									},
+								},
+								{
+									name: "ptr",
+									child: []testCaseForBenchmark{
+										{
+											name: "nzd",
+											fvnc: benchIfaceInLoopPtrUint8,
+										},
+										{
+											name: "zed",
+											fvnc: benchIfaceInLoopPtrUint8Zed,
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 				{
@@ -220,6 +251,39 @@ func TestLem(t *testing.T) {
 										{
 											name: "zed",
 											fvnc: benchIfaceOutLoopPtrInt32Zed,
+										},
+									},
+								},
+							},
+						},
+						{
+							name: "uint8",
+							child: []testCaseForBenchmark{
+								{
+									name: "val",
+									child: []testCaseForBenchmark{
+										{
+											name: "nzd",
+											fvnc: benchIfaceOutLoopUint8,
+										},
+										{
+											name: "zed",
+											fvnc: benchIfaceOutLoopUint8Zed,
+										},
+									},
+								},
+								{
+									name: "ptr",
+									child: []testCaseForBenchmark{
+										{
+											name:  "nzd",
+											fvnc:  benchIfaceOutLoopPtrUint8,
+											alloc: 1,
+											bytes: 1,
+										},
+										{
+											name: "zed",
+											fvnc: benchIfaceOutLoopPtrUint8Zed,
 										},
 									},
 								},
@@ -554,6 +618,86 @@ func benchIfaceOutLoopPtrInt32(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		p := new(int32)
+		dst = p
+	}
+	_ = dst
+}
+
+func benchIfaceInLoopUint8Zed(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var dst interface{}
+		var x uint8
+		dst = x
+		_ = dst
+	}
+}
+
+func benchIfaceInLoopUint8(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var dst interface{}
+		var x uint8 = 253
+		dst = x
+		_ = dst
+	}
+}
+
+func benchIfaceInLoopPtrUint8Zed(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var dst interface{}
+		var p *uint8
+		dst = p
+		_ = dst
+	}
+}
+
+func benchIfaceInLoopPtrUint8(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var dst interface{}
+		p := new(uint8)
+		dst = p
+		_ = dst
+	}
+}
+
+func benchIfaceOutLoopUint8Zed(b *testing.B) {
+	var dst interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var x uint8
+		dst = x
+	}
+	_ = dst
+}
+
+func benchIfaceOutLoopUint8(b *testing.B) {
+	var dst interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var x uint8 = 253
+		dst = x
+	}
+	_ = dst
+}
+
+func benchIfaceOutLoopPtrUint8Zed(b *testing.B) {
+	var dst interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var p *uint8
+		dst = p
+	}
+	_ = dst
+}
+
+func benchIfaceOutLoopPtrUint8(b *testing.B) {
+	var dst interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		p := new(uint8)
 		dst = p
 	}
 	_ = dst
