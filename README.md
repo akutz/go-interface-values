@@ -1,6 +1,6 @@
-# Golang interface values and memory
+# Go interface values
 
-This repository explores when storing a value in a Go interface allocates memory on the heap.
+This repository deep dives Go interface values, what they are, how they work, and when storing a value in a Go interface allocates memory on the heap.
 
 * [**Labs**](#labs): a step-by-step walkthrough of the topic
 * [**FAQ**](#FAQ): answers to frequently asked questions
@@ -45,7 +45,7 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 
 * [**`hack/`**](./hack)
   * [**`asm2md.py`**](./hack/asm2md.py): parses the output of `go tool compile -S -wb=false *.go` and produces a markdown table
-  * [**`b2md.py`**](./hack/b2md.py): parses the output of `go test -bench BenchmarkMem -run Mem -benchmem -count 1 -benchtime 1000x -v` and produces a markdown table 
+  * [**`b2md.py`**](./hack/b2md.py): parses the output of `go test -bench BenchmarkMem -run Mem -benchmem -count 1 -benchtime 1000x -v` and produces a markdown table
   * [**`gen.py`**](./hack/gen.py): generates [`./benchmarks/mem_test.go`](./benchmarks/mem_test.go), [`./benchmarks/print_test.go`](./benchmarks/print_test.go), and [`./benchmarks/types_test.go`](./benchmarks/types_test.go)
 
 
