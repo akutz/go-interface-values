@@ -97,6 +97,15 @@ generate: ## Generate the benchmarks
 
 
 ## --------------------------------------
+## Lint
+## --------------------------------------
+.PHONY: lint-markdown
+lint-markdown: ## Lint the project's markdown
+	@find . -name "*.md" -type f -print0 | \
+	  xargs -0 markdownlint -c .markdownlint.yaml
+
+
+## --------------------------------------
 ## Testing
 ## --------------------------------------
 RUN_IN_DOCKER := docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
