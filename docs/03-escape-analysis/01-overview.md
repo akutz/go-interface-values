@@ -1,6 +1,12 @@
 # Overview
 
-Go tries really, [_really_](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/escape.go) hard to keep memory on the stack where possible. Memory allocated on the stack relieves pressure on the garbage collector as the memory is cleaned up once the stack on which it is allocated no longer exists.
+Go manages memory allocated on the heap via garbage collection, but this can be a very expensive process. Compare that to stack where memory is "cheap" and does not require garbage collection as this type of memory is freed when its stack frame is destroyed. In order to allocate memory on the stack the Go compiler must evaluate several, determining factors:
+
+* pointers to stack objects cannot be stored in the heap
+* pointers to stack objects cannot outlive the object's stack frame
+* stack objects cannot exceed the size of the stack, ex. a 15 MiB buffer `[15 * 1024 * 1024]byte`
+
+The compile-time process Go employes to determine whether memory is dynamically managed on the heap or can be allocated on the stack is known as [_escape analysis_](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/escape.go).
 
 It is possible to see which variables end up on the heap by using the compiler flag `-m` when building (or testing) Go code. For example, let's build the program at [`./examples/cmd/lem/main.go`](../../examples/cmd/lem/main.go) with the the following command:
 
