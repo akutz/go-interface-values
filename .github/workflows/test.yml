@@ -15,8 +15,5 @@ jobs:
         stable: 'false'
         go-version: '1.18.0-beta2'
 
-    - name: Examples
-      run: make examples
-
     - name: Test
       run: make test

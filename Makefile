@@ -53,7 +53,7 @@ help:  ## Display this help
 
 # DOCKER_TARGETS is a list of targets that will have the -docker
 # option to run in the container.
-DOCKER_TARGETS := asm bench examples sizes test
+DOCKER_TARGETS := asm bench sizes test
 
 
 ## --------------------------------------
@@ -113,29 +113,23 @@ GCFLAGS := -gcflags "-l -N"
 
 .PHONY: test
 test: ## Run tests
-	go version && go test $(GCFLAGS) -run "^Test" -count 1 -v ./...
+	go version && go test -count 1 -v -run "^Test" ./...
 test-docker: ## Run tests w/ docker
-
-.PHONY: examples
-examples: ## Run examples
-	go version && go test $(GCFLAGS) -run "^Example" -count 1 -v ./examples/...
-examples-docker: ## Run examples w/ docker
 
 .PHONY: sizes
 sizes: ## Print sizes of types
-	go version && go test $(GCFLAGS) -count 1 -v ./benchmarks
+	go version && go test -count 1 -v ./benchmarks
 sizes-docker: ## Print sizes of types w/ docker
 
 .PHONY: bench
 bench: ## Run benchmarks
 	go version && \
 	go test \
-	  $(GCFLAGS) \
-	  -bench BenchmarkMem \
-	  -run Mem -benchmem \
 	  -count 1 \
-	  -benchtime 1000x \
 	  -v \
+	  -run Mem -benchmem \
+	  -bench BenchmarkMem \
+	  -benchtime 1000x \
 	  ./benchmarks | \
 	python3 hack/b2md.py
 bench-docker: ## Run benchmarks w/ docker

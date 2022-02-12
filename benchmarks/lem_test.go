@@ -17,16 +17,17 @@ limitations under the License.
 package benchmarks_test
 
 import (
+	"bufio"
 	"flag"
+	"fmt"
+	"os"
+	"os/exec"
+	"regexp"
+	"runtime"
+	"strconv"
 	"testing"
 )
 
-const (
-	oneMiB     = 1024 * 1024
-	fifteenMiB = 15 * oneMiB
-)
-
-//go:noinline
 func TestLem(t *testing.T) {
 	if f := flag.Lookup("test.benchtime"); f != nil {
 		og := f.Value.String()
@@ -43,742 +44,330 @@ func TestLem(t *testing.T) {
 		}()
 	}
 
-	testCases := []testCaseForBenchmark{
-		{
-			name: "no escape",
-			fvnc: benchNoEscape,
-		},
-		{
-			name: "move to heap",
-			child: []testCaseForBenchmark{
-				{
-					name:  "pkg pointer to stack var",
-					fvnc:  benchPkgPointerToStackVar,
-					alloc: 1,
-					bytes: 4,
-				},
-				{
-					name:  "too large for stack frame",
-					fvnc:  benchTooLargeForStackFrame,
-					alloc: 1,
-					bytes: fifteenMiB,
-				},
-			},
-		},
-		{
-			name: "leak",
-			child: []testCaseForBenchmark{
-				{
-					name: "to pkg var",
-					child: []testCaseForBenchmark{
-						{
-							name:  "escape",
-							fvnc:  benchEscapeByLeakingToPkgVar,
-							alloc: 1,
-							bytes: 4,
-						},
-					},
-				},
-				{
-					name: "to result",
-					child: []testCaseForBenchmark{
-						{
-							name: "store",
-							child: []testCaseForBenchmark{
-								{
-									name: "none",
-									fvnc: benchLeak2ResultStoreNone,
-								},
-								{
-									name: "in loop",
-									fvnc: benchLeak2ResultStoreInLoop,
-								},
-								{
-									name:  "outside of loop",
-									fvnc:  benchLeak2ResultStoreOutLoop,
-									alloc: 1,
-									bytes: 4,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		{
-			name: "chan",
-			child: []testCaseForBenchmark{
-				{
-					name: "outside of loop",
-					child: []testCaseForBenchmark{
-						{
-							name: "int32",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchChanInt32,
-										},
-										{
-											name: "zed",
-											fvnc: benchChanInt32Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchChanPtrInt32,
-											alloc: 1,
-											bytes: 4,
-										},
-										{
-											name: "zed",
-											fvnc: benchChanPtrInt32Zed,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		{
-			name: "iface",
-			child: []testCaseForBenchmark{
-				{
-					name: "in loop",
-					child: []testCaseForBenchmark{
-						{
-							name: "int32",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchIfaceInLoopInt32,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceInLoopInt32Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchIfaceInLoopPtrInt32,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceInLoopPtrInt32Zed,
-										},
-									},
-								},
-							},
-						},
-						{
-							name: "uint8",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchIfaceInLoopUint8,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceInLoopUint8Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchIfaceInLoopPtrUint8,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceInLoopPtrUint8Zed,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				{
-					name: "outside of loop",
-					child: []testCaseForBenchmark{
-						{
-							name: "int32",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchIfaceOutLoopInt32,
-											alloc: 1,
-											bytes: 4,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceOutLoopInt32Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchIfaceOutLoopPtrInt32,
-											alloc: 1,
-											bytes: 4,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceOutLoopPtrInt32Zed,
-										},
-									},
-								},
-							},
-						},
-						{
-							name: "uint8",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchIfaceOutLoopUint8,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceOutLoopUint8Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchIfaceOutLoopPtrUint8,
-											alloc: 1,
-											bytes: 1,
-										},
-										{
-											name: "zed",
-											fvnc: benchIfaceOutLoopPtrUint8Zed,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		{
-			name: "slice",
-			child: []testCaseForBenchmark{
-				{
-					name: "in loop",
-					child: []testCaseForBenchmark{
-						{
-							name: "int32",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchSliceInLoopInt32,
-										},
-										{
-											name: "zed",
-											fvnc: benchSliceInLoopInt32Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchSliceInLoopPtrInt32,
-											alloc: 1,
-											bytes: 4,
-										},
-										{
-											name: "zed",
-											fvnc: benchSliceInLoopPtrInt32Zed,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				{
-					name: "outside of loop",
-					child: []testCaseForBenchmark{
-						{
-							name: "int32",
-							child: []testCaseForBenchmark{
-								{
-									name: "val",
-									child: []testCaseForBenchmark{
-										{
-											name: "nzd",
-											fvnc: benchSliceOutLoopInt32,
-										},
-										{
-											name: "zed",
-											fvnc: benchSliceOutLoopInt32Zed,
-										},
-									},
-								},
-								{
-									name: "ptr",
-									child: []testCaseForBenchmark{
-										{
-											name:  "nzd",
-											fvnc:  benchSliceOutLoopPtrInt32,
-											alloc: 1,
-											bytes: 4,
-										},
-										{
-											name: "zed",
-											fvnc: benchSliceOutLoopPtrInt32Zed,
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+	// Get the test case groups.
+	testCaseGroups, err := getTestCaseGroups()
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	runTestCaseForBenchmark(t, testCases)
+	// Run the test case groups.
+	for i := range testCaseGroups {
+		t.Run(testCaseGroups[i].name, testCaseGroups[i].run)
+	}
 }
 
 var (
-	_leakDst *int32
-	_moveDst *int32
+	lemFuncs = map[string]func(*testing.B){}
 )
 
-func leak2Global(leaked2global *int32) *int32 {
-	_leakDst = leaked2global
-	return leaked2global
+const (
+	oneMiB     = 1024 * 1024
+	fifteenMiB = 15 * oneMiB
+)
+
+type lemMatch struct {
+	lineNo int
 }
 
-func leak2Result(leaked2result *int32) *int32 {
-	return leaked2result
+type lemTestCaseGroup struct {
+	name      string
+	testCases []lemTestCase
 }
 
-type testCaseForBenchmark struct {
+func (tcg lemTestCaseGroup) run(t *testing.T) {
+	for i := range tcg.testCases {
+		t.Run(tcg.testCases[i].name, tcg.testCases[i].run)
+	}
+}
+
+type lemTestCase struct {
 	name  string
 	fvnc  func(*testing.B)
+	cout  *string
 	alloc int64
 	bytes int64
-	child []testCaseForBenchmark
+	regxp []*regexp.Regexp
+}
+
+func (tc lemTestCase) run(t *testing.T) {
+	// Assert the expected leak, escape, move decisions match.
+	em := make(map[int]struct{}, len(tc.regxp))
+	for k, rx := range tc.regxp {
+		if rx.FindString(*tc.cout) != "" {
+			em[k] = struct{}{}
+		}
+	}
+	for k, rx := range tc.regxp {
+		if _, ok := em[k]; !ok {
+			t.Errorf("exp.m=%s", rx)
+		}
+	}
+
+	// Assert the expected allocs and bytes match.
+	r := testing.Benchmark(tc.fvnc)
+	if ea, aa := tc.alloc, r.AllocsPerOp(); ea != aa {
+		t.Errorf("exp.alloc=%d, act.alloc=%d", ea, aa)
+	}
+	if eb, ab := tc.bytes, r.AllocedBytesPerOp(); !eqBytes(eb, ab) {
+		t.Errorf("exp.bytes=%d, act.bytes=%d", eb, ab)
+	}
+}
+
+func compile(file string) (string, error) {
+	b, err := exec.Command("go", "tool", "compile", "-m", file).CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func getTestCaseGroups() ([]lemTestCaseGroup, error) {
+
+	// Get the path to this source file.
+	_, fileName, _, ok := runtime.Caller(0)
+	if !ok {
+		return nil, fmt.Errorf("cannot get filename")
+	}
+
+	// Compile this source file & print optimizations output.
+	compileOutput, err := compile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		lineNo     = 1
+		lemGroupX  int
+		lemTCaseX  int
+		lemGroups  = []lemTestCaseGroup{}
+		lemNameRx  = regexp.MustCompile(`^// lem\.((\w+)\d+)\.name=(.+)$`)
+		lemAllocRx = regexp.MustCompile(`^// lem\.[^.]+\.alloc=(.+)$`)
+		lemBytesRx = regexp.MustCompile(`^// lem\.[^.]+\.bytes=(.+)$`)
+		lemMatchRx = regexp.MustCompile(`// lem\.[^.]+\.m=(.+)$`)
+	)
+
+	f, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if m := lemNameRx.FindStringSubmatch(line); m != nil {
+			if len(lemGroups) == 0 || lemGroups[lemGroupX].name != m[2] {
+				lemGroups = append(lemGroups, lemTestCaseGroup{
+					name: m[2],
+				})
+				lemGroupX = len(lemGroups) - 1
+				lemTCaseX = 0
+			}
+			lemGroups[lemGroupX].testCases = append(
+				lemGroups[lemGroupX].testCases,
+				lemTestCase{
+					name: m[3],
+					fvnc: lemFuncs[m[1]],
+					cout: &compileOutput,
+				},
+			)
+			lemTCaseX = len(lemGroups[lemGroupX].testCases) - 1
+		} else if m := lemAllocRx.FindStringSubmatch(line); m != nil {
+			i, err := strconv.ParseInt(m[1], 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			lemGroups[lemGroupX].testCases[lemTCaseX].alloc = i
+		} else if m := lemBytesRx.FindStringSubmatch(line); m != nil {
+			i, err := strconv.ParseInt(m[1], 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			lemGroups[lemGroupX].testCases[lemTCaseX].bytes = i
+		} else if m := lemMatchRx.FindStringSubmatch(line); m != nil {
+			r, err := regexp.Compile(fmt.Sprintf("%d:\\d+: %s", lineNo, m[1]))
+			if err != nil {
+				return nil, err
+			}
+			lemGroups[lemGroupX].testCases[lemTCaseX].regxp = append(
+				lemGroups[lemGroupX].testCases[lemTCaseX].regxp, r)
+		}
+		lineNo++
+	}
+
+	return lemGroups, nil
 }
 
 func eqBytes(exp, act int64) bool {
-	if exp == fifteenMiB {
+	if exp%oneMiB == 0 {
 		return (exp / oneMiB) == (act / oneMiB)
 	}
 	return exp == act
 }
 
-func runTestCaseForBenchmark(t *testing.T, testCases []testCaseForBenchmark) {
-	for i := range testCases {
-		tc := testCases[i]
-		t.Run(tc.name, func(t *testing.T) {
-			if tc.fvnc != nil {
-				r := testing.Benchmark(tc.fvnc)
-				if ea, aa := tc.alloc, r.AllocsPerOp(); ea != aa {
-					t.Errorf("exp.alloc=%d, act.alloc=%d", ea, aa)
-				}
-				if eb, ab := tc.bytes, r.AllocedBytesPerOp(); !eqBytes(eb, ab) {
-					t.Errorf("exp.bytes=%d, act.bytes=%d", eb, ab)
-				}
-				if !t.Failed() {
-					t.Logf("allocs=%d, bytes=%d", tc.alloc, tc.bytes)
-				}
-			}
-			runTestCaseForBenchmark(t, tc.child)
-		})
+// lem.leak1.name=to sink
+// lem.leak1.alloc=0
+// lem.leak1.bytes=0
+func leak1(b *testing.B) {
+	var sink *int32
+	f := func(p *int32) { // lem.leak1.m=leaking param: p
+		sink = p
 	}
-}
-
-func benchPkgPointerToStackVar(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var stackVar int32 = 4096
-		_moveDst = &stackVar
-	}
-}
-
-func benchTooLargeForStackFrame(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var tooLargeForStackFrame [fifteenMiB]byte
-		_ = tooLargeForStackFrame
-	}
-}
-
-func benchNoEscape(b *testing.B) {
-	noop := func(args ...interface{}) {}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var (
-			a = new(int32)
-			b = new(int64)
-			c = make([]int32, 5, 5)
-			d = make([]*int64, 10, 10)
-			s = struct {
-				a int32
-				b int32
-			}{a: 4096, b: 4096}
-			ps = &struct {
-				a int32
-				b int32
-			}{a: 4096, b: 4096}
-		)
-		noop(a, b, c, d, s, ps)
+		f(nil)
 	}
+	_ = sink
+}
+func init() {
+	lemFuncs["leak1"] = leak1
 }
 
-func benchEscapeByLeakingToPkgVar(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		p := new(int32)
-		*p = 4096
-		leak2Global(p)
+// lem.leak2.name=to result
+// lem.leak2.alloc=0
+// lem.leak2.bytes=0
+func leak2(b *testing.B) {
+	f := func(p *int32) *int32 { // lem.leak2.m=leaking param: p to result ~r[0-1] level=0
+		return p
 	}
-}
-
-func benchLeak2ResultStoreNone(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		p := new(int32) // Does not escape
-		*p = 4096
-		leak2Result(p)
-	}
-}
-
-func benchLeak2ResultStoreInLoop(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		var pp *int32
-		p := new(int32) // Does not escape
-		*p = 4096
-		pp = leak2Result(p)
-		_ = pp
-	}
-}
-
-func benchLeak2ResultStoreOutLoop(b *testing.B) {
-	var pp *int32
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		p := new(int32) // Escapes
-		*p = 4096
-		pp = leak2Result(p)
+		f(nil)
 	}
-	b.StopTimer()
-	_ = pp
+}
+func init() {
+	lemFuncs["leak2"] = leak2
 }
 
-func benchChanInt32Zed(b *testing.B) {
-	c := make(chan int32, 1)
+// lem.noescape1.name=pointer does not outlive its call stack
+// lem.noescape1.alloc=0
+// lem.noescape1.bytes=0
+func noescape1(b *testing.B) {
+	f := func(p *int32) *int32 { // lem.noescape1.m=leaking param: p to result ~r[0-1] level=0
+		return p
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		f(new(int32)) // lem.noescape1.m=new\(int32\) does not escape
+	}
+}
+func init() {
+	lemFuncs["noescape1"] = noescape1
+}
+
+// lem.escape1.name=pointer outlived its call stack
+// lem.escape1.alloc=1
+// lem.escape1.bytes=4
+func escape1(b *testing.B) {
+	var sink *int32
+	f1 := func() *int32 {
+		return new(int32)
+	}
+	f2 := func(p *int32) *int32 { // lem.escape1.m=leaking param: p to result ~r[0-1] level=0
+		return p
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sink = (f2(f1())) // lem.escape1.m=new\(int32\) escapes to heap
+	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape1"] = escape1
+}
+
+// lem.escape2.name=heap cannot point to stack
+// lem.escape2.alloc=1
+// lem.escape2.bytes=4
+func escape2(b *testing.B) {
+	var sink *int32
+	f := func(p *int32) *int32 { // lem.escape1.m=leaking param: p to result ~r[0-1] level=0
+		return p
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sink = f(new(int32)) // lem.escape1.m=new\(int32\) escapes to heap
+	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape2"] = escape2
+}
+
+// lem.escape3.name=heap cannot point to stack; no malloc bc iface & zero value
+// lem.escape3.alloc=0
+// lem.escape3.bytes=0
+func escape3(b *testing.B) {
+	var sink interface{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var x int32
-		c <- x
-		<-c
+		sink = x // lem.escape3.m=x escapes to heap
 	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape3"] = escape3
 }
 
-func benchChanInt32(b *testing.B) {
-	c := make(chan int32, 1)
+// lem.escape4.name=heap cannot point to stack; no malloc bc iface & byte
+// lem.escape4.alloc=0
+// lem.escape4.bytes=0
+func escape4(b *testing.B) {
+	var sink interface{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var x int32 = 4096
-		c <- x
-		<-c
+		var x byte
+		x = 253
+		sink = x // lem.escape4.m=x escapes to heap
 	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape4"] = escape4
 }
 
-func benchChanPtrInt32Zed(b *testing.B) {
-	c := make(chan *int32, 1)
+// lem.escape5.name=heap cannot point to stack; no malloc bc iface & single byte-wide value
+// lem.escape5.alloc=0
+// lem.escape5.bytes=0
+func escape5(b *testing.B) {
+	var sink interface{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var p *int32
-		c <- p
-		<-c
+		var x int64
+		x = 253
+		sink = x // lem.escape5.m=x escapes to heap
 	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape5"] = escape5
 }
 
-func benchChanPtrInt32(b *testing.B) {
-	c := make(chan *int32, 1)
-	b.ResetTimer()
+// lem.move1.name=pointing to stack from heap
+// lem.move1.alloc=1
+// lem.move1.bytes=4
+func move1(b *testing.B) {
+	var sink *int32
 	for i := 0; i < b.N; i++ {
-		p := new(int32)
-		c <- p
-		<-c
+		var x int32 = 4096 // lem.move1.m=moved to heap: x
+		sink = &x
 	}
+	_ = sink
+}
+func init() {
+	lemFuncs["move1"] = move1
 }
 
-func benchIfaceInLoopInt32Zed(b *testing.B) {
-	b.ResetTimer()
+// lem.move2.name=too large for stack
+// lem.move2.alloc=1
+// lem.move2.bytes=15728640
+func move2(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var x int32
-		dst = x
-		_ = dst
+		var buf [15 * 1024 * 1024]byte // lem.move2.m=moved to heap: buf
+		_ = buf
 	}
 }
-
-func benchIfaceInLoopInt32(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var x int32 = 4096
-		dst = x
-		_ = dst
-	}
-}
-
-func benchIfaceInLoopPtrInt32Zed(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var p *int32
-		dst = p
-		_ = dst
-	}
-}
-
-func benchIfaceInLoopPtrInt32(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		p := new(int32)
-		dst = p
-		_ = dst
-	}
-}
-
-func benchIfaceOutLoopInt32Zed(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x int32
-		dst = x
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopInt32(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x int32 = 4096
-		dst = x
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopPtrInt32Zed(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var p *int32
-		dst = p
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopPtrInt32(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		p := new(int32)
-		dst = p
-	}
-	_ = dst
-}
-
-func benchIfaceInLoopUint8Zed(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var x uint8
-		dst = x
-		_ = dst
-	}
-}
-
-func benchIfaceInLoopUint8(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var x uint8 = 253
-		dst = x
-		_ = dst
-	}
-}
-
-func benchIfaceInLoopPtrUint8Zed(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		var p *uint8
-		dst = p
-		_ = dst
-	}
-}
-
-func benchIfaceInLoopPtrUint8(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var dst interface{}
-		p := new(uint8)
-		dst = p
-		_ = dst
-	}
-}
-
-func benchIfaceOutLoopUint8Zed(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x uint8
-		dst = x
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopUint8(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x uint8 = 253
-		dst = x
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopPtrUint8Zed(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var p *uint8
-		dst = p
-	}
-	_ = dst
-}
-
-func benchIfaceOutLoopPtrUint8(b *testing.B) {
-	var dst interface{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		p := new(uint8)
-		dst = p
-	}
-	_ = dst
-}
-
-func benchSliceInLoopInt32Zed(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dst := make([]int32, 1, 1)
-		var x int32
-		dst[0] = x
-		_ = dst
-	}
-}
-
-func benchSliceInLoopInt32(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dst := make([]int32, 1, 1)
-		var x int32 = 4096
-		dst[0] = x
-		_ = dst
-	}
-}
-
-func benchSliceInLoopPtrInt32Zed(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dst := make([]*int32, 1, 1)
-		var p *int32
-		dst[0] = p
-		_ = dst
-	}
-}
-
-func benchSliceInLoopPtrInt32(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dst := make([]*int32, 1, 1)
-		p := new(int32)
-		dst[0] = p
-		_ = dst
-	}
-}
-
-func benchSliceOutLoopInt32Zed(b *testing.B) {
-	dst := make([]int32, 1, 1)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x int32
-		dst[0] = x
-	}
-	_ = dst
-}
-
-func benchSliceOutLoopInt32(b *testing.B) {
-	dst := make([]int32, 1, 1)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var x int32 = 4096
-		dst[0] = x
-	}
-	_ = dst
-}
-
-func benchSliceOutLoopPtrInt32Zed(b *testing.B) {
-	dst := make([]*int32, 1, 1)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var p *int32
-		dst[0] = p
-	}
-	_ = dst
-}
-
-func benchSliceOutLoopPtrInt32(b *testing.B) {
-	dst := make([]*int32, 1, 1)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		p := new(int32)
-		dst[0] = p
-	}
-	_ = dst
+func init() {
+	lemFuncs["move2"] = move2
 }
