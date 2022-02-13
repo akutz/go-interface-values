@@ -3,20 +3,24 @@
 
 *.a
 *.bin
+*.ex*
 *.out
 *.test
-*.svg
+profile*.svg
 *.pid
 *.class
+.DS_Store 
 
 **/*.a
 **/*.bin
+**/*.ex*
 **/*.out
 **/*.test
-**/*.svg
+**/profile*.svg
 **/*.pid
 **/*.class
 **/*.profile
+**/.DS_Store 
 
 **/bin/
 **/obj/

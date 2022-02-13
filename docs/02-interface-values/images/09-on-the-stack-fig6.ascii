@@ -1,0 +1,23 @@
+                      bottom of stack frame             +--              local variables
+high address +---------------------------------------+  |  +-------------------+-------------------+ <-+
+             |              arguments           cCCC |  |  | name꞉ y           | type꞉ uintptr     |   |
+     |       +---------------------------------------+  |  | type꞉ interface{} | size꞉ 8 bytes     |   |
+     |       |         return address (PC)      c999 |  |  | size꞉ 16 bytes    | valu꞉ 0x8(SP)     |   |
+     |       +---------------------------------------+  |  |              c666 |              c666 |   |
+     |       |            frame pointer         c666 |  |  |                   +-------------------+ <-+0x24(SP)
+     |       +---------------------------------------+  |  |                   | type꞉ uintptr     |   |
+     |       |            return values         c333 |  |  |                   | size꞉ 8 bytes     |   |
+     v       +---------------------------------------+  |  |                   | valu꞉ &type.int64 |   |
+             |           local variables        c000 | -+  |                   |              c666 |   |
+low address  +---------------------------------------+  |  +-------------------+-------------------+ <-+0x16(SP)
+                        stack pointer (SP)              |  | name꞉                                 |   |
+                                                        |  | type꞉ int64                           |   |
+                                                        |  | size꞉ 8 bytes                         |   |
+                                                        |  | valu꞉ 2                          c333 |   |
+                                                        |  +---------------------------------------+ <-+0x8(SP)
+                                                        |  | name꞉ x                               |   |
+                                                        |  | type꞉ int64                           |   |
+                                                        |  | size꞉ 8 bytes                         |   |
+                                                        |  | valu꞉ 2                          c000 |   |
+                                                        |  +---------------------------------------+ <-+0(SP)
+                                                        +--

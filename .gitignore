@@ -3,10 +3,12 @@
 *.bin
 *.out
 *.test
-*.svg
+profile*.svg
 *.pid
 *.class
 *.profile
+*.ex*
+.DS_Store
 .vscode/
 bin/
 obj/

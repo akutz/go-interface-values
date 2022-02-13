@@ -51,14 +51,6 @@ help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 
-# DOCKER_TARGETS is a list of targets that will have the -docker
-# option to run in the container.
-DOCKER_TARGETS := asm bench sizes test
-
-
-## --------------------------------------
-## Images
-## --------------------------------------
 IMAGE_NAME ?= go-interface-values
 IMAGE_TAG  ?= latest
 IMAGE      ?= $(IMAGE_NAME):$(IMAGE_TAG)
@@ -66,6 +58,23 @@ PLATFORMS  ?= linux/amd64,linux/arm64
 PUSH_ALL   ?=
 IMAGE_RUN_FLAGS ?= -it --rm
 
+# DOCKER_TARGETS is a list of targets that will have the -docker
+# option to run in the container with the working directory mounted
+# into the container.
+DOCKER_TARGETS := generate-svgs
+
+# SANDBOX_TARGETS is a list of targets that will have the -sandbox
+# option to run in the container.
+SANDBOX_TARGETS := asm bench sizes test
+
+RUN_IN_PREFIX  := docker run $(IMAGE_RUN_FLAGS)
+RUN_IN_DOCKER  := $(RUN_IN_PREFIX) -v "$$(pwd):/go-interface-values" $(IMAGE)
+RUN_IN_SANDBOX := $(RUN_IN_PREFIX) $(IMAGE)
+
+
+## --------------------------------------
+## Images
+## --------------------------------------
 .PHONY: image-build
 image-build: ## Build the docker image
 	docker build -t $(IMAGE) .
@@ -85,15 +94,25 @@ image-push-all: ## Push the docker image for multiple platforms
 
 .PHONY: image-run
 image-run: ## Launch the docker image
-	docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
+	$(RUN_IN_SANDBOX)
 
 
 ## --------------------------------------
 ## Generate
 ## --------------------------------------
-.PHONY: generate
-generate: ## Generate the benchmarks
+
+# The command line to invoke ditaa. In the Docker image this
+# will be set to "java /ditaa.jar".
+DITAA ?= ditaa
+
+.PHONY: generate-tests
+generate-tests: ## Generate the tests
 	cd benchmarks && python3 ../hack/gen.py
+
+.PHONY: generate-svgs
+generate-svgs: ## Generate the svgs
+	@find . -name '*.ascii' -type f -print0 | \
+	xargs -0n1 $(DITAA) -E -o --svg --font-family courier
 
 
 ## --------------------------------------
@@ -102,24 +121,21 @@ generate: ## Generate the benchmarks
 .PHONY: lint-markdown
 lint-markdown: ## Lint the project's markdown
 	@find . -name "*.md" -type f -print0 | \
-	  xargs -0 markdownlint -c .markdownlint.yaml
+	xargs -0 markdownlint -c .markdownlint.yaml
 
 
 ## --------------------------------------
 ## Testing
 ## --------------------------------------
-RUN_IN_DOCKER := docker run $(IMAGE_RUN_FLAGS) $(IMAGE)
 GCFLAGS := -gcflags "-l -N"
 
 .PHONY: test
 test: ## Run tests
 	go version && go test -count 1 -v -run "^Test" ./...
-test-docker: ## Run tests w/ docker
 
 .PHONY: sizes
 sizes: ## Print sizes of types
 	go version && go test -count 1 -v ./benchmarks
-sizes-docker: ## Print sizes of types w/ docker
 
 .PHONY: bench
 bench: ## Run benchmarks
@@ -132,7 +148,6 @@ bench: ## Run benchmarks
 	  -benchtime 1000x \
 	  ./benchmarks | \
 	python3 hack/b2md.py
-bench-docker: ## Run benchmarks w/ docker
 
 .PHONY: asm
 asm: ## Print asm table
@@ -143,7 +158,6 @@ asm: ## Print asm table
 	  -wb=false \
 	  iface_test.go mem_test.go types_test.go | \
 	python3 ../hack/asm2md.py
-asm-docker: ## Print asm table w/ docker
 
 
 ## --------------------------------------
@@ -161,8 +175,15 @@ clean: ## Clean up artifacts
 ## --------------------------------------
 ## Meta
 ## --------------------------------------
+# Set up the sandbox targets.
+SANDBOX_TARGETS := $(addsuffix -sandbox,$(SANDBOX_TARGETS))
+.PHONY: $(SANDBOX_TARGETS)
+$(SANDBOX_TARGETS):
+	$(RUN_IN_SANDBOX) make $(subst -sandbox,,$@)
+
 # Set up the docker targets.
 DOCKER_TARGETS := $(addsuffix -docker,$(DOCKER_TARGETS))
 .PHONY: $(DOCKER_TARGETS)
 $(DOCKER_TARGETS):
 	$(RUN_IN_DOCKER) make $(subst -docker,,$@)
+
