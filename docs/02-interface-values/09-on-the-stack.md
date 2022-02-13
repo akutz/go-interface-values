@@ -112,8 +112,8 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
         * `0(SP)`
             * The `DST` of the copy operation.
             * The `0` indicates an offset of zero bytes from some address.
-            * The address is indicated by `(SP)`, _stack pointer_, the highest memory address of the current stack frame.
-            * Therefore `0(SP)` can be translated as _zero bytes from the highest memory address of the current strack frame_.
+            * The address is indicated by `(SP)`, _stack pointer_, which points to the top of the current call stack frame on x86 platforms.
+            * Therefore `0(SP)` can be translated as _zero bytes from the top of the current strack frame_.
 
     <br />
 
@@ -133,8 +133,8 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
         * `0x10(SP)`
             * The `DST` of the copy operation.
             * The `0x10`  indicates an offset of 16 bytes (`0x10` is hexadecimal for 16) from some address.
-            * The address is indicated by `(SP)`, _stack pointer_, the highest memory address of the current stack frame.
-            * Therefore `0x10(SP)` can be translated as _16 bytes from the highest memory address of the current strack frame_.
+            * The address is indicated by `(SP)`, _stack pointer_, which points to the top of the current call stack frame on x86 platforms.
+            * Therefore `0x10(SP)` can be translated as _16 bytes from the top of the current strack frame_.
 
     <br />
 
