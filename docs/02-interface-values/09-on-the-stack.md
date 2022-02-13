@@ -117,7 +117,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.1](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig1.svg?sanitize=true)
+    ![Fig.1](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig1.svg?sanitize=true&0)
 
 1. `ex1.go:21	0x2c7a			440f117c2410		MOVUPS X15, 0x10(SP)`
     * The assembly for line21, `var y interface{}`.
@@ -138,7 +138,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.2](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig2.svg?sanitize=true)
+    ![Fig.2](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig2.svg?sanitize=true&0)
 
 
     Wait, why was `y` offset by 16 bytes when `x` is only eight bytes? Find out below! :smiley:
@@ -149,7 +149,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.3](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig3.svg?sanitize=true)
+    ![Fig.3](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig3.svg?sanitize=true&0)
 
 1. `ex1.go:23	0x2c88			48c744240802000000	MOVQ $0x2, 0x8(SP)`
     * The assembly for `y = x`
@@ -159,7 +159,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig4.svg?sanitize=true)
+    ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig4.svg?sanitize=true&0)
 
 1. `ex1.go:23	0x2c91			488d0500000000		LEAQ 0(IP), AX		[3:7]R_PCREL:type.int64`
     * Still more assembly for `y = x`
@@ -192,7 +192,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.5](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig5.svg?sanitize=true)
+    ![Fig.5](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig5.svg?sanitize=true&0)
 
 1. `ex1.go:23	0x2c9d			488d442408		LEAQ 0x8(SP), AX`
     * Still more assembly for `y = x`
@@ -206,7 +206,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.6](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig6.svg?sanitize=true)
+    ![Fig.6](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig6.svg?sanitize=true&0)
 
 Wait a minute, isn't memory referenced by pointer allocated on the heap!? In fact Go can optimize that memory to the stack as well, and that is what happens in this example. The Go compiler was able to place the value stored in `y` on the stack at address `0x8(SP)` and let the pointer at `0x18(SP)` reference `0x8(SP)`, all on the stack.
 

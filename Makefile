@@ -112,7 +112,7 @@ generate-tests: ## Generate the tests
 .PHONY: generate-svgs
 generate-svgs: ## Generate the svgs
 	@find . -name '*.ascii' -type f -print0 | \
-	xargs -0n1 $(DITAA) -E -o --svg --font-family courier
+	xargs -0n1 $(DITAA) -E -o --background FFFFFF --svg --font-family courier
 
 
 ## --------------------------------------

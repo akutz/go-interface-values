@@ -1,13 +1,13 @@
                       bottom of stack frame              +--             local variables
 high address +---------------------------------------+   |  +---------------------------------------+ <-+
-             |              arguments           cCCC |   |  | name꞉ x                               |   |
+             |              arguments           cFFF |   |  | name꞉ x                               |   |
      |       +---------------------------------------+  ++  | type꞉ int64                           |   |
-     |       |         return address (PC)      c999 |  ||  | size꞉ 8 bytes                         |   |
-     |       +---------------------------------------+  ||  | valu꞉ 0                          c000 |   |
-     |       |            frame pointer         c666 |  ||  +---------------------------------------+ <-+0(SP)
+     |       |         return address (PC)      c9F9 |  ||  | size꞉ 8 bytes                         |   |
+     |       +---------------------------------------+  ||  | valu꞉ 0                          c363 |   |
+     |       |            frame pointer         c6C6 |  ||  +---------------------------------------+ <-+0(SP)
      |       +---------------------------------------+  |+--
-     |       |            return values         c333 |  |
+     |       |            return values         c696 |  |
      v       +---------------------------------------+  |
-             |           local variables        c000 | -+
+             |           local variables        c363 | -+
 low address  +---------------------------------------+
                         stack pointer (SP)

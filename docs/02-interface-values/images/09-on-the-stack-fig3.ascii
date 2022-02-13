@@ -1,23 +1,23 @@
                       bottom of stack frame             +--              local variables
 high address +---------------------------------------+  |  +---------------------------------------+ <-+
-             |              arguments           cCCC |  |  | name꞉ y                               |   |
+             |              arguments           cFFF |  |  | name꞉ y                               |   |
      |       +---------------------------------------+  |  | type꞉ interface{}                     |   |
-     |       |         return address (PC)      c999 |  |  | size꞉ 16 bytes                        |   |
+     |       |         return address (PC)      c9F9 |  |  | size꞉ 16 bytes                        |   |
      |       +---------------------------------------+  |  |                                       |   |
-     |       |            frame pointer         c666 |  |  |                                       | <-+0x24(SP)
+     |       |            frame pointer         c6C6 |  |  |                                       | <-+0x24(SP)
      |       +---------------------------------------+  |  |                                       |   |
-     |       |            return values         c333 |  |  |                                       |   |
+     |       |            return values         c696 |  |  |                                       |   |
      v       +---------------------------------------+  |  |                                       |   |
-             |           local variables        c000 | -+  |                                  c666 |   |
+             |           local variables        c363 | -+  |                                  c6C6 |   |
 low address  +---------------------------------------+  |  +---------------------------------------+ <-+0x16(SP)
-                        stack pointer (SP)              |                                              |
-                                                        |                                              |
-                                                        |                                              |
-                                                        |                                              |
+                        stack pointer (SP)              |  :                                       :   |
+                                                        |  :                                       :   |
+                                                        |  :                                       :   |
+                                                        |  :                                       :   |
                                                         |  +---------------------------------------+ <-+0x8(SP)
                                                         |  | name꞉ x                               |   |
                                                         |  | type꞉ int64                           |   |
                                                         |  | size꞉ 8 bytes                         |   |
-                                                        |  | valu꞉ 2                          c000 |   |
+                                                        |  | valu꞉ 2                          c363 |   |
                                                         |  +---------------------------------------+ <-+0(SP)
                                                         +--
