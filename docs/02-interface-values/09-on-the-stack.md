@@ -159,7 +159,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     <br />
 
-    ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig4.svg?sanitize=true&0)
+    ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig4.svg?sanitize=true&1)
 
 1. `ex1.go:23	0x2c91			488d0500000000		LEAQ 0(IP), AX		[3:7]R_PCREL:type.int64`
     * Still more assembly for `y = x`
