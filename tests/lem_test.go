@@ -88,20 +88,22 @@ type lemTestCase struct {
 	bout  *string
 	alloc int64
 	bytes int64
-	regxp []*regexp.Regexp
+	match []*regexp.Regexp
+	natch []*regexp.Regexp
 }
 
 func (tc lemTestCase) run(t *testing.T) {
 	// Assert the expected leak, escape, move decisions match.
-	em := make(map[int]struct{}, len(tc.regxp))
-	for k, rx := range tc.regxp {
-		if rx.FindString(*tc.bout) != "" {
-			em[k] = struct{}{}
+	for _, rx := range tc.match {
+		if rx.FindString(*tc.bout) == "" {
+			t.Errorf("exp.m=%s", rx)
 		}
 	}
-	for k, rx := range tc.regxp {
-		if _, ok := em[k]; !ok {
-			t.Errorf("exp.m=%s", rx)
+
+	// Assert the expected leak, escape, move decisions do not match.
+	for _, rx := range tc.natch {
+		if rx.FindString(*tc.bout) != "" {
+			t.Errorf("exp.m!=%s", rx)
 		}
 	}
 
@@ -154,6 +156,7 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 		lemAllocRx = regexp.MustCompile(`^// lem\.[^.]+\.alloc=(.+)$`)
 		lemBytesRx = regexp.MustCompile(`^// lem\.[^.]+\.bytes=(.+)$`)
 		lemMatchRx = regexp.MustCompile(`// lem\.[^.]+\.m=(.+)$`)
+		lemNatchRx = regexp.MustCompile(`// lem\.[^.]+\.m!=(.+)$`)
 	)
 
 	// Get a list of the test sources.
@@ -164,6 +167,7 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 
 	for _, filePath := range srcFilePaths {
 		var (
+			lines    []string
 			lineNo   = 1
 			fileName = filepath.Base(filePath)
 		)
@@ -177,6 +181,7 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			line := scanner.Text()
+			lines = append(lines, line)
 			if m := lemNameRx.FindStringSubmatch(line); m != nil {
 				if len(lemGroups) == 0 || lemGroups[lemGroupX].name != m[2] {
 					lemGroups = append(lemGroups, lemTestCaseGroup{
@@ -185,14 +190,13 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 					lemGroupX = len(lemGroups) - 1
 					lemTCaseX = 0
 				}
+				ltc := lemTestCase{
+					name: m[3],
+					fvnc: lemFuncs[m[1]],
+					bout: &buildOutput,
+				}
 				lemGroups[lemGroupX].testCases = append(
-					lemGroups[lemGroupX].testCases,
-					lemTestCase{
-						name: m[3],
-						fvnc: lemFuncs[m[1]],
-						bout: &buildOutput,
-					},
-				)
+					lemGroups[lemGroupX].testCases, ltc)
 				lemTCaseX = len(lemGroups[lemGroupX].testCases) - 1
 			} else if m := lemAllocRx.FindStringSubmatch(line); m != nil {
 				i, err := strconv.ParseInt(m[1], 10, 64)
@@ -213,13 +217,21 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 				if err != nil {
 					return nil, err
 				}
-				lemGroups[lemGroupX].testCases[lemTCaseX].regxp = append(
-					lemGroups[lemGroupX].testCases[lemTCaseX].regxp, r)
+				lemGroups[lemGroupX].testCases[lemTCaseX].match = append(
+					lemGroups[lemGroupX].testCases[lemTCaseX].match, r)
+			} else if m := lemNatchRx.FindStringSubmatch(line); m != nil {
+				r, err := regexp.Compile(
+					fmt.Sprintf("%s:%d:\\d+: %s", fileName, lineNo, m[1]),
+				)
+				if err != nil {
+					return nil, err
+				}
+				lemGroups[lemGroupX].testCases[lemTCaseX].natch = append(
+					lemGroups[lemGroupX].testCases[lemTCaseX].natch, r)
 			}
 			lineNo++
 		}
 	}
-
 	return lemGroups, nil
 }
 

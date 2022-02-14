@@ -194,7 +194,7 @@ func escape10(b *testing.B) {
 		var y int64
 		x = 255
 		y = 256
-		sink = x
+		sink = x // lem.escape10.m!=escape\|leak\|move
 		sink = y // lem.escape10.m=y escapes to heap
 	}
 	_ = sink
@@ -239,12 +239,12 @@ func escape12(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var (
-			a = new(int32) // lem.escape12.m=new\(int32\) escapes to heap
-			b = new(int64)
-			c = make([]int32, 5, 5)
-			d = make([]*int64, 10, 10)
-			e = s{a: 4096, b: 4096}
-			f = new(s)
+			a = new(int32)             // lem.escape12.m=new\(int32\) escapes to heap
+			b = new(int64)             // lem.escape12.m!=escape\|leak\|move
+			c = make([]int32, 5, 5)    // lem.escape12.m!=escape\|leak\|move
+			d = make([]*int64, 10, 10) // lem.escape12.m!=escape\|leak\|move
+			e = s{a: 4096, b: 4096}    // lem.escape12.m!=escape\|leak\|move
+			f = new(s)                 // lem.escape12.m!=escape\|leak\|move
 		)
 		sink, _, _, _, _, _ = noop(a, b, c, d, e, f)
 	}

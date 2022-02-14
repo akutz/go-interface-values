@@ -116,7 +116,7 @@ func leak6(b *testing.B) {
 		b *int64, // lem.leak6.m=leaking param: b to result ~r1 level=0
 		c []int32, // lem.leak6.m=leaking param: c to result ~r2 level=0
 		d []*int64, // lem.leak6.m=leaking param: d to result ~r3 level=0
-		e s,
+		e s, // lem.leak6.m!=escape\|leak\|move
 		f *s, // lem.leak6.m=leaking param: f to result ~r5 level=0
 	) (*int32, *int64, []int32, []*int64, s, *s) {
 		return a, b, c, d, e, f
@@ -124,12 +124,12 @@ func leak6(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var (
-			a = new(int32)
-			b = new(int64)
-			c = make([]int32, 5, 5)
-			d = make([]*int64, 10, 10)
-			e = s{a: 4096, b: 4096}
-			f = new(s)
+			a = new(int32)             // lem.leak6.m!=escape\|leak\|move
+			b = new(int64)             // lem.leak6.m!=escape\|leak\|move
+			c = make([]int32, 5, 5)    // lem.leak6.m!=escape\|leak\|move
+			d = make([]*int64, 10, 10) // lem.leak6.m!=escape\|leak\|move
+			e = s{a: 4096, b: 4096}    // lem.leak6.m!=escape\|leak\|move
+			f = new(s)                 // lem.leak6.m!=escape\|leak\|move
 		)
 		noop(a, b, c, d, e, f)
 	}
@@ -138,7 +138,7 @@ func init() {
 	lemFuncs["leak6"] = leak6
 }
 
-// lem.leak7.name=did not escape bc return value did not outlive the stack frame
+// lem.leak7.name=did not escape bc return value did not outlive stack frame
 // lem.leak7.alloc=0
 // lem.leak7.bytes=0
 func leak7(b *testing.B) {
@@ -147,11 +147,11 @@ func leak7(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var x int32 = 4096
-		if f(&x) == nil {
-			// Do nothing
-		}
-		_ = x
+		var x int32 = 4096 // lem.leak7.m!=escape\|leak\|move
+		var p *int32 = &x  // lem.leak7.m!=escape\|leak\|move
+		var sink *int32    // lem.leak7.m!=escape\|leak\|move
+		sink = f(p)        // lem.leak7.m!=escape\|leak\|move
+		_ = sink
 	}
 }
 func init() {
