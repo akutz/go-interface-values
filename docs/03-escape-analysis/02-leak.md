@@ -2,13 +2,14 @@
 
 Imagine for a moment there is a kitchen sink with a crack in it. The sink has the _potential_ to leak, but nothing will _escape_ the basin until the sink is used. Much like our imaginary sink, escape analysis inspects variables with the potential to escape when they are used. If that potential exists, the variable is marked as "leaking." 
 
-* [**Eligibility**](#eligibility): which types of variables can leak?
+* [**Criteria**](#criteria): what are the criteria leading to a leak?
 * [**Leak destination**](#leak-destination): where does the water go when it goes down the drain?
   * [**Leaking (to a sink)**](#leaking-to-a-sink): bye-bye
   * [**Leaking to result**](#leaking-to-result): you'll be back!
 * [**Leak without escape**](#leak-without-escape): you never left!
 
-## Eligibility
+
+## Criteria
 
 There are two requirements to be eligible for leaking:
 
@@ -17,12 +18,19 @@ There are two requirements to be eligible for leaking:
 
 Value types such as built-in numeric types, structs, and arrays are not elgible to be leaked. That does not mean they are never placed on the heap, it just means a parameter of `int32` is not going to send you running for a mop anytime soon.
 
+If the above criteria is met, then a parameter will leak if:
+
+* The variable is returned from the same function and/or
+* is assigned to a sink outside of the stack frame to which the variable belongs.
+
+
 ## Leak destination
 
 There are two primary types of leaks:
 
 * leaking (to a sink)
 * leaking to result
+
 
 ### Leaking (to a sink)
 
