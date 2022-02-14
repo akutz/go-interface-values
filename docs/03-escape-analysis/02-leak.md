@@ -10,13 +10,10 @@ Imagine for a moment there is a kitchen sink with a crack in it. The sink has th
 
 ## Eligibility
 
-By design only the following types can be leaked:
+There are two requirements to be eligible for leaking:
 
-* Channels
-* Interfaces
-* Maps
-* Pointers
-* Slices
+* The variable must be a function parameter
+* The variable must be a reference type, ex. channels, interfaces, maps, pointers, slices
 
 Value types such as built-in numeric types, structs, and arrays are not elgible to be leaked. That does not mean they are never placed on the heap, it just means a parameter of `int32` is not going to send you running for a mop anytime soon.
 
