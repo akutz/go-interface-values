@@ -18,6 +18,7 @@ package main
 
 var lastLoginAttemptUsername *string
 
+//go:noinline
 func Login(
 	username *string, // leaking param
 	password *string, // does not escape
@@ -35,6 +36,7 @@ func Login(
 	}
 }
 
+//go:noinline
 func main() {
 	var (
 		username1 = "fake"               // moved to heap

@@ -55,6 +55,10 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 * [**x86 and amd64 instruction set**](https://www.felixcloutier.com/x86/index.html)
 * [**A quick guide to Go assembly**](https://go.dev/doc/asm)
 * [**Logging, interfaces, and allocation**](https://commaok.xyz/post/interface-allocs/)
+* [**Go introduction to escape analysise**](https://medium.com/a-journey-with-go/go-introduction-to-the-escape-analysis-f7610174e890)
+* [**Type definitions for leaks**](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/graph.go)
+* [**Enums for escape**](https://github.com/golang/go/blob/master/src/cmd/compile/internal/ir/node.go)
+* [**Type definition for a Go stack frame**](https://github.com/golang/go/blob/master/src/runtime/stack.go)
 
 
 ## Appendix

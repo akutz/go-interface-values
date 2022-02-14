@@ -11,11 +11,3 @@ Before we dig into why storing a value in an interface can result in a heap allo
 ---
 
 Next: [An overview](./01-overview.md)
-
-typedefs for leaks -- https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/graph.go
-
-enums for escape  -- https://github.com/golang/go/blob/master/src/cmd/compile/internal/ir/node.go
-
-stack frame -- https://github.com/golang/go/blob/master/src/runtime/stack.go
-
-ast and stack frame life - https://medium.com/a-journey-with-go/go-introduction-to-the-escape-analysis-f7610174e890

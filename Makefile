@@ -133,6 +133,10 @@ GCFLAGS := -gcflags "-l -N"
 test: ## Run tests
 	go version && go test -count 1 -v -run "^Test" ./...
 
+.PHONY: test-m
+test-m: ## Print optimizations
+	go version && go test -count 1 -v -c -gcflags -m ./tests
+
 .PHONY: sizes
 sizes: ## Print sizes of types
 	go version && go test -count 1 -v ./benchmarks

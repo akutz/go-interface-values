@@ -14,12 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package examples
+package main
 
-func ifaceonthestack() {
-	var x int64
-	var y interface{}
-	x = 2
-	y = x
-	_ = y
+import "os"
+
+//go:noinline
+func validateID(id *int32) *int32 { // leaking param: id to result ~r1 level=0
+	return id
+}
+
+func main() {
+	var id1 int32 = 4096
+	if validateID(&id1) == nil {
+		os.Exit(1)
+	}
+
+	var id2 *int32 = new(int32) // new(int32) does not escape
+	*id2 = 4096
+	validID := validateID(id2)
+	if validID == nil {
+		os.Exit(1)
+	}
 }
