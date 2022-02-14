@@ -135,7 +135,7 @@ test: ## Run tests
 
 .PHONY: test-m
 test-m: ## Print optimizations
-	go version && go test -count 1 -v -c -gcflags -m ./tests
+	go version && go test -count 1 -v -c -gcflags -m ./docs/03-escape-analysis/tests
 
 .PHONY: sizes
 sizes: ## Print sizes of types
