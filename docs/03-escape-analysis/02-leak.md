@@ -2,7 +2,7 @@
 
 Imagine for a moment there is a kitchen sink with a crack in it. The sink has the _potential_ to leak, but nothing will _escape_ the basin until the sink is used. Much like our imaginary sink, escape analysis inspects variables with the potential to escape when they are used. If that potential exists, the variable is marked as "leaking." 
 
-* [**Criteria**](#criteria): what are the criteria leading to a leak?
+* [**Criteria**](#criteria): what are the criteria for leaking?
 * [**Leak destination**](#leak-destination): where does the water go when it goes down the drain?
   * [**Leaking (to a sink)**](#leaking-to-a-sink): bye-bye
   * [**Leaking to result**](#leaking-to-result): you'll be back!

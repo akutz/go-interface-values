@@ -2,7 +2,7 @@
 
 Someone turned on the tap and that leaky sink just let water escape. But just like in real life, there does not need to be a pre-existing leak for the floor to get wet. This page discusses when and how variables escape to the heap, either by way of a leaked parameter or all on their own.
 
-* [**Criteria**](#criteria): what are the criteria leading to an escape?
+* [**Criteria**](#criteria): what are the criteria for escaping to the heap?
 * [**Escaping via a leaked parameter**](#escaping-via-a-leaked-parameter): bring the duct tape!
 * [**Escaping via a sink**](#escaping-via-a-sink): a little easier to detect
 
