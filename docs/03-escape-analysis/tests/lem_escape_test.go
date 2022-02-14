@@ -194,7 +194,7 @@ func escape10(b *testing.B) {
 		var y int64
 		x = 255
 		y = 256
-		sink = x // lem.escape10.m!=escape\|leak\|move
+		sink = x // lem.escape10.m!=(escape|leak|move)
 		sink = y // lem.escape10.m=y escapes to heap
 	}
 	_ = sink
@@ -226,12 +226,12 @@ func init() {
 func escape12(b *testing.B) {
 	type s struct{ a, b int32 }
 	noop := func(
-		a *int32, // lem.escape12.m=leaking param: a to result ~r0 level=0
-		b *int64, // lem.escape12.m=leaking param: b to result ~r1 level=0
-		c []int32, // lem.escape12.m=leaking param: c to result ~r2 level=0
-		d []*int64, // lem.escape12.m=leaking param: d to result ~r3 level=0
-		e s,
-		f *s, // lem.escape12.m=leaking param: f to result ~r5 level=0
+		a *int32, // lem.escape12.m=leaking param: a to result ~r[06] level=0
+		b *int64, // lem.escape12.m=leaking param: b to result ~r[17] level=0
+		c []int32, // lem.escape12.m=leaking param: c to result ~r[28] level=0
+		d []*int64, // lem.escape12.m=leaking param: d to result ~r[39] level=0
+		e s, // lem.escape12.m!=(escape|leak|move)
+		f *s, // lem.escape12.m=leaking param: f to result ~r(5|11) level=0
 	) (*int32, *int64, []int32, []*int64, s, *s) {
 		return a, b, c, d, e, f
 	}
@@ -240,11 +240,11 @@ func escape12(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var (
 			a = new(int32)             // lem.escape12.m=new\(int32\) escapes to heap
-			b = new(int64)             // lem.escape12.m!=escape\|leak\|move
-			c = make([]int32, 5, 5)    // lem.escape12.m!=escape\|leak\|move
-			d = make([]*int64, 10, 10) // lem.escape12.m!=escape\|leak\|move
-			e = s{a: 4096, b: 4096}    // lem.escape12.m!=escape\|leak\|move
-			f = new(s)                 // lem.escape12.m!=escape\|leak\|move
+			b = new(int64)             // lem.escape12.m=new\(int64\) does not escape
+			c = make([]int32, 5, 5)    // lem.escape12.m=make\(\[\]int32, 5, 5\) does not escape
+			d = make([]*int64, 10, 10) // lem.escape12.m=make\(\[\]\*int64, 10, 10\) does not escape
+			e = s{a: 4096, b: 4096}    // lem.escape12.m!=(escape|leak|move)
+			f = new(s)                 // lem.escape12.m=new\(s\) does not escape
 		)
 		sink, _, _, _, _, _ = noop(a, b, c, d, e, f)
 	}

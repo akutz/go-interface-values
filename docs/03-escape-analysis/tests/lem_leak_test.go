@@ -112,24 +112,24 @@ func init() {
 func leak6(b *testing.B) {
 	type s struct{ a, b int32 }
 	noop := func(
-		a *int32, // lem.leak6.m=leaking param: a to result ~r0 level=0
-		b *int64, // lem.leak6.m=leaking param: b to result ~r1 level=0
-		c []int32, // lem.leak6.m=leaking param: c to result ~r2 level=0
-		d []*int64, // lem.leak6.m=leaking param: d to result ~r3 level=0
-		e s, // lem.leak6.m!=escape\|leak\|move
-		f *s, // lem.leak6.m=leaking param: f to result ~r5 level=0
+		a *int32, // lem.leak6.m=leaking param: a to result ~r[06] level=0
+		b *int64, // lem.leak6.m=leaking param: b to result ~r[17] level=0
+		c []int32, // lem.leak6.m=leaking param: c to result ~r[28] level=0
+		d []*int64, // lem.leak6.m=leaking param: d to result ~r[39] level=0
+		e s, // lem.leak6.m!=(escape|leak|move)
+		f *s, // lem.leak6.m=leaking param: f to result ~r(5|11) level=0
 	) (*int32, *int64, []int32, []*int64, s, *s) {
 		return a, b, c, d, e, f
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var (
-			a = new(int32)             // lem.leak6.m!=escape\|leak\|move
-			b = new(int64)             // lem.leak6.m!=escape\|leak\|move
-			c = make([]int32, 5, 5)    // lem.leak6.m!=escape\|leak\|move
-			d = make([]*int64, 10, 10) // lem.leak6.m!=escape\|leak\|move
-			e = s{a: 4096, b: 4096}    // lem.leak6.m!=escape\|leak\|move
-			f = new(s)                 // lem.leak6.m!=escape\|leak\|move
+			a = new(int32)             // lem.leak6.m!=(escape|leak|move)
+			b = new(int64)             // lem.leak6.m!=(escape|leak|move)
+			c = make([]int32, 5, 5)    // lem.leak6.m!=(escape|leak|move)
+			d = make([]*int64, 10, 10) // lem.leak6.m!=(escape|leak|move)
+			e = s{a: 4096, b: 4096}    // lem.leak6.m!=(escape|leak|move)
+			f = new(s)                 // lem.leak6.m!=(escape|leak|move)
 		)
 		noop(a, b, c, d, e, f)
 	}
@@ -147,10 +147,10 @@ func leak7(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var x int32 = 4096 // lem.leak7.m!=escape\|leak\|move
-		var p *int32 = &x  // lem.leak7.m!=escape\|leak\|move
-		var sink *int32    // lem.leak7.m!=escape\|leak\|move
-		sink = f(p)        // lem.leak7.m!=escape\|leak\|move
+		var x int32 = 4096 // lem.leak7.m!=(escape|leak|move)
+		var p *int32 = &x  // lem.leak7.m!=(escape|leak|move)
+		var sink *int32    // lem.leak7.m!=(escape|leak|move)
+		sink = f(p)        // lem.leak7.m!=(escape|leak|move)
 		_ = sink
 	}
 }

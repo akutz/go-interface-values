@@ -102,8 +102,8 @@ func (tc lemTestCase) run(t *testing.T) {
 
 	// Assert the expected leak, escape, move decisions do not match.
 	for _, rx := range tc.natch {
-		if rx.FindString(*tc.bout) != "" {
-			t.Errorf("exp.m!=%s", rx)
+		if s := rx.FindString(*tc.bout); s != "" {
+			t.Errorf("exp.m!=%s, found=%s", rx, s)
 		}
 	}
 
@@ -152,11 +152,11 @@ func getTestCaseGroups() ([]lemTestCaseGroup, error) {
 		lemGroupX  int
 		lemTCaseX  int
 		lemGroups  = []lemTestCaseGroup{}
-		lemNameRx  = regexp.MustCompile(`^// lem\.((\w+?)\d+)\.name=(.+)$`)
-		lemAllocRx = regexp.MustCompile(`^// lem\.[^.]+\.alloc=(.+)$`)
-		lemBytesRx = regexp.MustCompile(`^// lem\.[^.]+\.bytes=(.+)$`)
-		lemMatchRx = regexp.MustCompile(`// lem\.[^.]+\.m=(.+)$`)
-		lemNatchRx = regexp.MustCompile(`// lem\.[^.]+\.m!=(.+)$`)
+		lemNameRx  = regexp.MustCompile(`(?m)^// lem\.((\w+?)\d+)\.name=(.+)$`)
+		lemAllocRx = regexp.MustCompile(`(?m)^// lem\.[^.]+\.alloc=(.+)$`)
+		lemBytesRx = regexp.MustCompile(`(?m)^// lem\.[^.]+\.bytes=(.+)$`)
+		lemMatchRx = regexp.MustCompile(`(?m)// lem\.[^.]+\.m=(.+)$`)
+		lemNatchRx = regexp.MustCompile(`(?m)// lem\.[^.]+\.m!=(.+)$`)
 	)
 
 	// Get a list of the test sources.
