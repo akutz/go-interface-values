@@ -18,7 +18,7 @@ limitations under the License.
 // !! Generated code -- do not modify !!
 //
 
-package benchmarks_test
+package mem_test
 
 var (
 	_int   int

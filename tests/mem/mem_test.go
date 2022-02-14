@@ -1,4 +1,4 @@
-//go:generate python3 ../hack/gen.py
+//go:generate python3 ../../hack/gen.py
 
 /*
 Copyright 2022
@@ -16,18 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package benchmarks_test is used to benchmark the possible
-// mallocs that can occur when storing interface values.
-//
-// Print the size of the exemplar, predefined types and structs using the
-// following command:
-//
-//     go test
-//
-// Run the benchmark with the following command:
-//
-//     go test -bench . -run Box -benchmem -count 1
-package benchmarks_test
+// Package mem_test is used to benchmark the possible mallocs that can occur
+// when storing interface values.
+package mem_test
 
 import (
 	"math/rand"

@@ -61,7 +61,7 @@ else:
     f = sys.stdin
 
 rx = re.compile(
-    r"\((mem_test\.go:(\d+)\))\s(\w?MOV\w*|LEAQ?)\s+\S+\.(_[\w\d_]+)\(SB\).*\1\s(CALL|(?:LEAQ?)|(?:\w?MOV\w*))\s(runtime\.[\w\d]+)\(SB\)",
+    r"\((bench_test\.go:(\d+)\))\s(\w?MOV\w*|LEAQ?)\s+\S+\.(_[\w\d_]+)\(SB\).*\1\s(CALL|(?:LEAQ?)|(?:\w?MOV\w*))\s(runtime\.[\w\d]+)\(SB\)",
     re.S,  # singleline
 )
 

@@ -44,9 +44,9 @@ Please refer to [this answer](./docs/99-appendix/assembly.md#where-is-the-call-i
 The `hack` directory is a convention I picked up from working on Kubernetes and projects related to Kuberentes. The directory contains scripts useful to the project, but not a core piece of the project itself. For example:
 
 * [**`hack/`**](./hack)
-  * [**`asm2md.py`**](./hack/asm2md.py): parses the output of `go tool compile -S -wb=false *.go` and produces a markdown table
-  * [**`b2md.py`**](./hack/b2md.py): parses the output of `go test -bench BenchmarkMem -run Mem -benchmem -count 1 -benchtime 1000x -v` and produces a markdown table
-  * [**`gen.py`**](./hack/gen.py): generates [`./benchmarks/mem_test.go`](./benchmarks/mem_test.go), [`./benchmarks/print_test.go`](./benchmarks/print_test.go), and [`./benchmarks/types_test.go`](./benchmarks/types_test.go)
+  * [**`asm2md.py`**](./hack/asm2md.py): parses the output of `go tool compile -S -wb=false ./tests/mem/*.go` and produces a markdown table
+  * [**`b2md.py`**](./hack/b2md.py): parses the output of `go test -v -count 1 -benchtime 1000x -bench BenchmarkMem -run Mem -benchmem ./tests/mem` and produces a markdown table
+  * [**`gen.py`**](./hack/gen.py): generates [`./tests/mem/bench_test.go`](./tests/mem/mem_test.go) and [`./tests/mem/types_test.go`](./tests/mem/types_test.go)
 
 
 ## Links
@@ -54,6 +54,7 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 * [**ARM developer documentation**](https://developer.arm.com/documentation/ddi0602/2021-12/?lang=en)
 * [**x86 and amd64 instruction set**](https://www.felixcloutier.com/x86/index.html)
 * [**A quick guide to Go assembly**](https://go.dev/doc/asm)
+* [**Go internal application binary interface (ABI) specification**](https://github.com/golang/go/blob/master/src/cmd/compile/abi-internal.md)
 * [**Logging, interfaces, and allocation**](https://commaok.xyz/post/interface-allocs/)
 * [**Go introduction to escape analysise**](https://medium.com/a-journey-with-go/go-introduction-to-the-escape-analysis-f7610174e890)
 * [**Type definitions for leaks**](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/graph.go)

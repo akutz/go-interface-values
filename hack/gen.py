@@ -43,7 +43,7 @@ limitations under the License.
 // !! Generated code -- do not modify !!
 //
 
-package benchmarks_test
+package mem_test
 
 """
 
@@ -149,8 +149,7 @@ _INSTRUMENTED_TYPES = [
 ]
 
 _TYPES_TEST_PATH = "types_test.go"
-_PRINT_TEST_PATH = "print_test.go"
-_MEM_TEST_PATH = "mem_test.go"
+_MEM_TEST_PATH = "bench_test.go"
 
 _is_struct = lambda t: t["type"].startswith("struct")
 _non_struct_types = [t for t in _INSTRUMENTED_TYPES if not _is_struct(t)]
@@ -265,57 +264,7 @@ def gen_types():
     go_fmt(_TYPES_TEST_PATH)
 
 
-def gen_print():
-    s = 'fmt.Fprintf(w, s, "{}", _{}, unsafe.Sizeof(_{}), unsafe.Sizeof(&_{}), unsafe.Sizeof(interface{{}}(_{})), unsafe.Sizeof(interface{{}}(&_{})))\n'
-
-    def _print(f, it, is_wrapped=False):
-        t = it["type"] if "name" not in it else it["name"]
-        if is_wrapped:
-            t = "struct_" + t
-        f.write(s.format(t, t, t, t, t, t))
-
-    with open(_PRINT_TEST_PATH, "w") as f:
-        f.write(_HEADER)
-        f.write(
-            """
-        import (
-            "fmt"
-            "os"
-            "testing"
-            "text/tabwriter"
-            "unsafe"
-        )
-        """
-        )
-
-        f.write(
-            """
-        func TestPrintSizes(t *testing.T) {
-            w := tabwriter.NewWriter(os.Stdout, 4, 0, 1, ' ', tabwriter.Debug)
-            fmt.Fprintf(w, "| T\\t real(T)\\t size(T)\\t size(*T)\\t size(any(T))\\t size(any(*T)) |\\n")
-            fmt.Fprintf(w, "|:---:|:---:|:---:|:---:|:---:|:---:|\\n")
-            const s = "| %s\\t `%T`\\t %d\\t %d\\t %d\\t %d |\\n"
-        """
-        )
-
-        # Print the non-struct types.
-        for it in _non_struct_types:
-            _print(f, it)
-
-        # Print the non-struct types wrapped by a struct.
-        for it in _non_struct_types:
-            _print(f, it, is_wrapped=True)
-
-        # Print the struct types.
-        for it in _struct_types:
-            _print(f, it)
-
-        f.write("w.Flush()\n}\n")
-
-    go_fmt(_PRINT_TEST_PATH)
-
-
-def gen_mem():
+def gen_bench():
 
     s = """
     b.Run("{0}", func(b *testing.B) {{
@@ -376,5 +325,4 @@ def gen_mem():
 
 
 gen_types()
-gen_print()
-gen_mem()
+gen_bench()

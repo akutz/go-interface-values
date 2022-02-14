@@ -106,8 +106,8 @@ image-run: ## Launch the docker image
 DITAA ?= ditaa
 
 .PHONY: generate-tests
-generate-tests: ## Generate the tests
-	cd benchmarks && python3 ../hack/gen.py
+generate-tests: ## Generate the mem tests
+	cd tests/mem && python3 ../../hack/gen.py
 
 .PHONY: generate-svgs
 generate-svgs: ## Generate the svgs
@@ -134,34 +134,27 @@ test: ## Run tests
 	go version && go test -count 1 -v -run "^Test" ./...
 
 .PHONY: test-m
-test-m: ## Print optimizations
-	go version && go test -count 1 -v -c -gcflags -m ./docs/03-escape-analysis/tests
-
-.PHONY: sizes
-sizes: ## Print sizes of types
-	go version && go test -count 1 -v ./benchmarks
+test-lem-m: ## Print optimizations
+	go version && go test -count 1 -v -c -gcflags -m ./tests/lem
 
 .PHONY: bench
 bench: ## Run benchmarks
 	go version && \
 	go test \
-	  -count 1 \
 	  -v \
+	  -count 1 \
+	  -benchtime 1000x \
 	  -run Mem -benchmem \
 	  -bench BenchmarkMem \
-	  -benchtime 1000x \
-	  ./benchmarks | \
+	  ./tests/mem | \
 	python3 hack/b2md.py
 
 .PHONY: asm
 asm: ## Print asm table
 	go version && \
-	cd benchmarks && \
-	go tool compile \
-	  -S \
-	  -wb=false \
-	  iface_test.go mem_test.go types_test.go | \
-	python3 ../hack/asm2md.py
+	cd ./tests/mem && \
+	go tool compile -S -wb=false *.go | \
+	python3 ../../hack/asm2md.py
 
 
 ## --------------------------------------

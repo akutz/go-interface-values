@@ -37,13 +37,13 @@ The `CALL` instruction specifies `runtime.convT32(SB)`. The `(SB)` (_static base
 1. Build the test binary for this project:
 
     ```bash
-    go test -c ./benchmarks
+    go test -c ./tests/mem
     ```
 
 2. Use `go tool objdump` to search for the symbol:
 
     ```bash
-    $ go tool objdump -s runtime.convT32 benchmarks.test
+    $ go tool objdump -s runtime.convT32 mem.test
     TEXT runtime.convT32(SB) /Users/akutz/.go/1.18beta2/src/runtime/iface.go
       iface.go:365		0x100008b20		f9400b90		MOVD 16(R28), R16
       ...
