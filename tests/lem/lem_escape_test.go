@@ -26,7 +26,7 @@ import (
 func escape1(b *testing.B) {
 	var sink *int32
 	f1 := func() *int32 {
-		return new(int32)
+		return new(int32) // lem.escape1.m=new\(int32\) escapes to heap
 	}
 	f2 := func(p *int32) *int32 { // lem.escape1.m=leaking param: p to result ~r[0-1] level=0
 		return p
