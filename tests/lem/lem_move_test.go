@@ -37,7 +37,7 @@ func init() {
 
 // lem.move2.name=too large for stack
 // lem.move2.alloc=1
-// lem.move2.bytes=15728640
+// lem.move2.bytes=15728640-15728700
 func move2(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var buf [15 * 1024 * 1024]byte // lem.move2.m=moved to heap: buf
