@@ -18,7 +18,7 @@ high address +---------------------------------------+  | |                   | 
              |           local variables        c363 | -+ +-------------------+-------------------+ <-+16 0x10(SP)
 low address  +---------------------------------------+  | | name꞉                                 |   |15
                         stack pointer (SP)              | | type꞉ int64                           |   |14
-                        top of stack frame              | | size꞉ 16 bytes                        |   |13
+                        top of stack frame              | | size꞉ 8 bytes                         |   |13
                                                         | | valu꞉ 2                               |   |10
                                                         | |                                       |   |11
                                                         | |                                       |   |10
@@ -26,7 +26,7 @@ low address  +---------------------------------------+  | | name꞉             
                                                         | +---------------------------------------+ <-+08 0x8(SP)
                                                         | | name꞉ x                               |   |07
                                                         | | type꞉ int64                           |   |06
-                                                        | | size꞉ 16 bytes                        |   |05
+                                                        | | size꞉ 8 bytes                         |   |05
                                                         | | valu꞉ 2                               |   |04
                                                         | |                                       |   |03
                                                         | |                                       |   |02

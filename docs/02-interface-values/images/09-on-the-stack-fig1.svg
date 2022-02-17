@@ -48,7 +48,7 @@
     <text x='305' y='68' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[arguments]]></text>
     <text x='630' y='68' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[name꞉ x]]></text>
     <text x='630' y='82' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[type꞉ int64]]></text>
-    <text x='630' y='96' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 16 bytes]]></text>
+    <text x='630' y='96' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 8 bytes]]></text>
     <text x='738' y='40' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[local variables]]></text>
     <text x='1061' y='68' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[07]]></text>
     <text x='1061' y='82' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[06]]></text>

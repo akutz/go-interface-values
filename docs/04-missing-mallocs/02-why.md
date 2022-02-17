@@ -87,6 +87,10 @@ With that in mind, let's get started:
     * The assembly for `sink = x`.
     * `MOVL $0x2, AX` copies the literal value `2` into the register `AX`.
 
+    <br />
+
+    ![Fig.3](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig3.svg?sanitize=true)
+
 1. `ex1.go:22		0x4ee46b		e8d0c4f1ff		CALL runtime.convT64(SB)`
     * Continuing the assembly for `sink = x`.
     * `CALL runtime.convT64(SB)`
@@ -157,6 +161,11 @@ With that in mind, let's get started:
                 * The `AX` register is what the compiler used to store the literal `2`, the value of `x`, when we wanted to store `x` in `sink`.
             * `LEAQ runtime.staticuint64s(SB), CX`
                 * This instruction loads the address for the global symbol `runtime.staticuint64s` into the register `CX`
+
+                <br />
+
+                ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig4.svg?sanitize=true)
+
             * `LEAQ 0(CX)(AX*8), CX`
                 * Stores an address in the register `CX` that is the address already in `CX` offset by the value in the register `AX` times `8`.
                 * This is pointer math to get the address offset by 16 bytes from the address of `staticuint64s`.
@@ -166,9 +175,18 @@ With that in mind, let's get started:
                 * Since `staticuint64s` is an array of the values 0-255, then the address of `staticuint64s` points to value `0`.
                 * Thus `16` bytes offset from `0` will be the second element in the array, which means...
                 * The address of the literal `2` is loaded into the register `CX`.
+
+                <br />
+
+                ![Fig.5](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig5.svg?sanitize=true)
+
             * _jump to address `0x40a990`_
             * `MOVQ CX, AX`
                 * Copies the value in register `CX` (the address of the literal `2` from the global array `staticuint64s`) into register `AX`
+
+                <br />
+
+                ![Fig.6](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig6.svg?sanitize=true)
 
 1. `ex1.go:22		0x4ee470		4889442410		MOVQ AX, 0x10(SP)`
     * Continuing the assembly for `sink = x`.
@@ -176,10 +194,18 @@ With that in mind, let's get started:
     * The `AX` register contains the addres of the literal `2` from the global array `staticuint64s`.
     * The instruction copies that address at a 16 byte offset from the top of the stack (just after the memory location of variable `x`).
 
+    <br />
+
+    ![Fig.7](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig7.svg?sanitize=true)
+
 1. `ex1.go:22		0x4ee475		488d0de4d10000		LEAQ 0xd1e4(IP), CX`
     * Continuing the assembly for `sink = x`.
     * `LEAQ 0xd1e4(IP), CX` stores the address of the next CPI instruction in register `CX`.
     * Ultimately what is stored in `CX` is the address of `type.int64`, a global value that specifies the internal type for an `int64`.
+
+    <br />
+
+    ![Fig.8](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig8.svg?sanitize=true)
 
 1. `ex1.go:22		0x4ee47c		48890ddd7c1000		MOVQ CX, go-interface-values/docs/04-missing-mallocs/examples/ex1.sink(SB)`
     * Continuing the assembly for `sink = x`.
@@ -188,10 +214,18 @@ With that in mind, let's get started:
     * That corresponds to the size of a `uintptr` on a 64-bit platform.
     * Because the destination was the same as the address of `var sink interface{}`, we know the value is assigned as the _type_ address in the interface.
 
+    <br />
+
+    ![Fig.9](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig9.svg?sanitize=true)
+
 1. `ex1.go:22		0x4ee483		488905de7c1000		MOVQ AX, go-interface-values/docs/04-missing-mallocs/examples/ex1.sink+8(SB)`
     * Continuing the assembly for `sink = x`.
     * `MOVQ AX, go-interface-values/docs/04-missing-mallocs/examples/ex1.sink+8(SB)` copies the value in register `AX`, the addres of the literal `2` from the global array `staticuint64s`, to 8 bytes offset from the start of the symbol `sink`, the `interface{}` defined in our example.
     * Because the destination is an 8 byte offset from the address of `var sink interface{}`, we know the value is assigned as the _value_ address in an interface.
+
+    <br />
+
+    ![Fig.10](https://raw.github.com/akutz/go-interface-values/main/docs/04-missing-mallocs/images/02-why-fig10.svg?sanitize=true)
 
 ---
 

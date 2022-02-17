@@ -65,11 +65,11 @@
     <text x='305' y='166' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[arguments]]></text>
     <text x='620' y='404' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[name꞉ x]]></text>
     <text x='620' y='418' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[type꞉ int64]]></text>
-    <text x='620' y='432' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 16 bytes]]></text>
+    <text x='620' y='432' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 8 bytes]]></text>
     <text x='620' y='446' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[valu꞉ 2]]></text>
     <text x='623' y='292' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[name꞉]]></text>
     <text x='620' y='306' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[type꞉ int64]]></text>
-    <text x='620' y='320' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 16 bytes]]></text>
+    <text x='620' y='320' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[size꞉ 8 bytes]]></text>
     <text x='620' y='334' font-family='Courier' font-size='15' stroke='none' fill='#ffffff' ><![CDATA[valu꞉ 2]]></text>
     <text x='620' y='68' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[name꞉ y]]></text>
     <text x='620' y='82' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[type꞉ interface{}]]></text>
