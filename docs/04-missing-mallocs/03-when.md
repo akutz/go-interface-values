@@ -5,7 +5,7 @@ So the question you may be asking is _when_ will this happen? When does storing 
 * Zero values, including `0`, `nil`, and an empty string `""` all qualify.
 * Any value that is type which is a single byte wide, such as `bool`, `int8`, and `uint8`.
 * Any integer type with a value that is in the inclusive range of 0-255.
-* Some structs with a single field that follows the above rules are also subject to this special behavior, but not always. 
+* In some cases if `T` is subject to an optimization, so too will `struct{a T}`.
 
 In order to produce a more comprehensive dataset for when this behavior _could_ occur, we can run the following command:
 

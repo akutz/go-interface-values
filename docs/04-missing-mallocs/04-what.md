@@ -1,6 +1,30 @@
 # Overall impact
 
+The previous page reviews which types are subject to optimizations Go uses when storing values in interfaces, but did not actually detail the impact.  Well, there are a few criteria reviewed on the previous page, but here it is again for convenience:
 
+* Zero values, including `0`, `nil`, and an empty string `""` all qualify.
+* Any value that is type which is a single byte wide, such as `bool`, `int8`, and `uint8`.
+* Any integer type with a value that is in the inclusive range of 0-255.
+* In some cases if `T` is subject to an optimization, so too will `struct{a T}`.
+
+In order to produce a more comprehensive dataset for when this behavior _could_ occur, we can run the following command:
+
+```bash
+docker run -it --rm go-interface-values:latest \
+  bash -c 'go test -v -count 1 -benchtime 1000x \
+  -run Mem -benchmem -bench BenchmarkMem ./tests/mem | \
+  python3 hack/b2md.py --no-echo'
+```
+
+The output will be a markdown table that prints the:
+
+* friendly name of the type
+* the actual type as formatted with `%T`
+* the number of bytes allocated on the heap to:
+    * copy a zero value to another variable of the same type
+    * store a zero value in an interface
+    * copy a non-zero value to another variable of the same type
+    * store a non-zero value in an interface
 
 | Type | `%T` | Bytes to store zero value | ....in an interface | Bytes to store non-zero, random value | ...in an interface |
 |:----:|:----:|:-------------------------:|:-------------------:|:-------------------------------------:|:------------------:|
@@ -44,6 +68,20 @@
 | struct_int32_int64 | `struct { a int32; b int64 }` | 0 | 16 | 0 | 16 |
 | struct_array_bytes_7 | `struct { a [7]uint8 }` | 0 | 8 | 0 | 8 |
 | struct_byte_7 | `struct { a uint8; b uint8; c uint8; d uint8; e uint8; f uint8; g uint8 }` | 0 | 8 | 0 | 8 |
+
+The above table clearly aligns with the findings in this repository, that the following values stored in interfaces do not result in memory allocated on the heap:
+
+* zero values, ex. `0`, `nil`, and `""`
+* single byte-wide types, ex. `byte`, `bool`, `int8`, and `uint8`
+* non-zero, numeric values between and including 0-255 for types:
+    * `int`, `int8`, `int16`, `int32`, `int64`
+    * `uint`, `uint8`, `uint16`, `uint32`, `iint64`
+* zero values for `struct{a T}` where `T` is:
+    * `int`, `int16`, `int32`, `int64`
+    * `uint`, `uint16`, `uint32`, `uint64`
+    * `float32`, `float64`
+    * `rune` (which has an underlying type of `int32`)
+    * `string`
 
 ---
 
