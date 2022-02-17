@@ -7,7 +7,7 @@ Wow, what a ride! What I meant to be a quick detour to help me better understand
 * Escape analysis occurs before optimizations for storing values in an interface.
 * Just because a value is marked as "escapes to heap" does not mean memory is allocated on the heap.
 
-And remember, if you ever want to see if an assignment allocates memory on the heap, all you have to do is take a quick trip to the [Go playground](https://go.dev/play/p/6hv9ysLupD0):
+And remember, if you ever want to see if an assignment allocates memory on the heap, all you have to do is take a quick trip to the [Go playground](https://go.dev/play/p/OoN-qxRHqsi):
 
 ```go
 package main
@@ -65,7 +65,7 @@ func TestStoringInterfaceValues(t *testing.T) {
 				t.Errorf("expAlloc=%d, actAlloc=%d", ea, aa)
 			}
 			if eb, ab := tc.expBytes, r.AllocedBytesPerOp(); eb != ab {
-				t.Errorf("expBytes=%d, actAlloc=%d", eb, ab)
+				t.Errorf("expBytes=%d, actBytes=%d", eb, ab)
 			}
 		})
 	}
