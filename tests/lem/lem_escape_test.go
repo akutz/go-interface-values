@@ -276,3 +276,37 @@ func escape13(b *testing.B) {
 func init() {
 	lemFuncs["escape13"] = escape13
 }
+
+// lem.escape14.name=malloc w storing <256 in interface bc float32
+// lem.escape14.alloc=1
+// lem.escape14.bytes=4
+func escape14(b *testing.B) {
+	var sink interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var x float32
+		x = 253
+		sink = x // lem.escape14.m=x escapes to heap
+	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape14"] = escape14
+}
+
+// lem.escape15.name=malloc w storing <256 in interface bc float64
+// lem.escape15.alloc=1
+// lem.escape15.bytes=8
+func escape15(b *testing.B) {
+	var sink interface{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var x float64
+		x = 253
+		sink = x // lem.escape15.m=x escapes to heap
+	}
+	_ = sink
+}
+func init() {
+	lemFuncs["escape15"] = escape15
+}

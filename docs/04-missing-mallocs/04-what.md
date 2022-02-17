@@ -19,8 +19,8 @@ docker run -it --rm go-interface-values:latest \
 The output will be a markdown table that prints the:
 
 * friendly name of the type
-* the actual type as formatted with `%T`
-* the number of bytes allocated on the heap to:
+* actual type as formatted with `%T`
+* number of bytes allocated on the heap to:
     * copy a zero value to another variable of the same type
     * store a zero value in an interface
     * copy a non-zero value to another variable of the same type
@@ -76,6 +76,16 @@ The above table clearly aligns with the findings in this repository, that the fo
 * non-zero, numeric values between and including 0-255 for types:
     * `int`, `int8`, `int16`, `int32`, `int64`
     * `uint`, `uint8`, `uint16`, `uint32`, `iint64`
+    * ~~`float32`, `float64`~~
+
+        ---
+
+        It is unclear to me why the types `float32` and `float64` are not subject to this optimization, but tests show they are not. The functions `convT32` and `convT64` are used for these types when storing values in interfaces, and those functions have the optimization logic.
+
+        I intend to raise this in Gopher Slack and with a GitHub issue, and I will link those here.
+
+        ---
+
 * zero values for `struct{a T}` where `T` is:
     * `int`, `int16`, `int32`, `int64`
     * `uint`, `uint16`, `uint32`, `uint64`
