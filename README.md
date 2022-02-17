@@ -5,6 +5,7 @@ This repository deep dives Go interface values, what they are, how they work, an
 * [**Labs**](#labs): a step-by-step walkthrough of the topic
 * [**FAQ**](#FAQ): answers to frequently asked questions
 * [**Links**](#links): links to related reference material
+* [**Thanks**](#thanks): it takes a community
 * [**Appendix**](#appendix): in-repo reference material
 
 
@@ -60,6 +61,11 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 * [**Type definitions for leaks**](https://github.com/golang/go/blob/master/src/cmd/compile/internal/escape/graph.go)
 * [**Enums for escape**](https://github.com/golang/go/blob/master/src/cmd/compile/internal/ir/node.go)
 * [**Type definition for a Go stack frame**](https://github.com/golang/go/blob/master/src/runtime/stack.go)
+
+
+## Thanks
+
+Many thanks to reddit user _nikandfor_ for [their response](https://www.reddit.com/r/golang/comments/sdsfl9/trying_to_understand_when_boxing_results_in_a/huf2upt/) to my post on this topic. Without that initial work, I am not sure this repository would exist today.
 
 
 ## Appendix
