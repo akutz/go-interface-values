@@ -66,7 +66,17 @@ The `hack` directory is a convention I picked up from working on Kubernetes and 
 
 ## Thanks
 
-Many thanks to reddit user _nikandfor_ for [their response](https://www.reddit.com/r/golang/comments/sdsfl9/trying_to_understand_when_boxing_results_in_a/huf2upt/) to my post on this topic. Without that initial work, I am not sure this repository would exist today.
+* Many thanks to reddit user _nikandfor_ for [their response](https://www.reddit.com/r/golang/comments/sdsfl9/trying_to_understand_when_boxing_results_in_a/huf2upt/) to my post on this topic. Without that initial work, I am not sure this repository would exist today.
+* My gratitude to Crypto Jones from Gopher Slack for keeping me honest about "boxing." :smiley:
+* My colleague Michael Gasch who spent a lot of time proofreading this repository. Hear that y'all? Any mistakes you find? Totally Michael's fault! :smiley:
+* Andrew Williams, another co-worker, who did not judge me when he helpfully explained [cache lines](https://teivah.medium.com/go-and-cpu-caches-af5d32cc5592).
+* The first person who offered to help me dig into the assembly, Kevin Grittner!
+* Several of my colleagues who directed me to a [Trie](https://en.wikipedia.org/wiki/Trie) structure for the repository's bespoke test framework:
+  * Michal Jankowski
+  * Zhanghe Liu
+  * Yiyi Zhou
+  * Mayank Bhatt
+  * Arunesh Pandey
 
 
 ## Appendix
