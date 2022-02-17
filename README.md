@@ -15,6 +15,7 @@ This repository deep dives Go interface values, what they are, how they work, an
 1. [**Interface values**](./docs/02-interface-values/): whatever you do, do not call it "boxing"
 1. [**Escape analysis**](./docs/03-escape-analysis/): to malloc or not to malloc
 1. [**Missing mallocs**](./docs/04-missing-mallocs/): there's a heap of missing memory
+1. [**Lessons learned**](./docs/05-lessons-learned/): key takeaways
 
 
 ## FAQ
