@@ -67,10 +67,14 @@ rx = re.compile(
 
 
 x86_asm_op_links = {
-    "CALL": "https://developer.arm.com/documentation/ddi0602/2021-12/Base-Instructions/BLR--Branch-with-Link-to-Register-?lang=en",
+    "CALL": "https://www.felixcloutier.com/x86/call",
+    "LEA": "https://www.felixcloutier.com/x86/lea",
+    "MOV": "https://www.felixcloutier.com/x86/mov",
 }
 
-arm_asm_op_links = {}
+arm_asm_op_links = {
+    "CALL": "https://developer.arm.com/documentation/ddi0602/2021-12/Base-Instructions/BLR--Branch-with-Link-to-Register-?lang=en",
+}
 
 go_func_links = {
     "convT16": "https://github.com/golang/go/blob/41f485b9a7d8fd647c415be1d11b612063dff21c/src/runtime/iface.go#L352-L363",
@@ -97,17 +101,15 @@ def get_x86_asm_op_link(s):
         key = "CALL"
     elif "LEA" in s:
         key = "LEA"
-    if not key or key not in arm_asm_op_links:
+    if not key or key not in x86_asm_op_links:
         return s
     return "[{}]({})".format(s, x86_asm_op_links[key])
 
 
 def get_asm_op_link(s):
-    key = None
     if "arm" in platform.processor():
         return get_arm_asm_op_link(s)
-    else:
-        return get_x86_asm_op_link(s)
+    return get_x86_asm_op_link(s)
 
 
 def get_go_func_link(s):

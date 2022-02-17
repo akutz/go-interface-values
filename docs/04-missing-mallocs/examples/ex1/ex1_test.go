@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package ex1
 
-func ex1() {
-	var x int64
-	var i interface{}
-	x = 2
-	i = x
-	_ = i
+import "testing"
+
+func BenchmarkEscapeNoMalloc(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		ex1()
+	}
 }

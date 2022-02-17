@@ -9,13 +9,13 @@ We have learned that storing a value in an interface results in a copy of that v
 The example on this page is based on the source code in [ex1.go](./examples/ex1/ex1.go):
 
 ```go
-/* line 22 */ func ex1() {
-/* line 23 */     var x int64
-/* line 24 */     var y interface{}
-/* line 25 */     x = 2
-/* line 26 */     y = x
-/* line 27 */     _ = y
-/* line 28 */ }
+/* line 19 */ func ex1() {
+/* line 20 */     var x int64
+/* line 21 */     var y interface{}
+/* line 22 */     x = 2
+/* line 23 */     y = x
+/* line 24 */     _ = y
+/* line 25 */ }
 ```
 
 With that in mind, let's get started:
@@ -55,41 +55,41 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 3. The resulting output will be similar (but not identical) to the following:
 
     ```assembly
-    TEXT go-interface-values/docs/02-interface-values/examples.ex1(SB) gofile../go-interface-values/docs/02-interface-values/examples/ex1.go
-      ex1.go:19	0x2c64			4883ec28		SUBQ $0x28, SP		[2:2]R_USEIFACE:type.int64	
-      ex1.go:19	0x2c68			48896c2420		MOVQ BP, 0x20(SP)	
-      ex1.go:19	0x2c6d			488d6c2420		LEAQ 0x20(SP), BP	
-      ex1.go:20	0x2c72			48c7042400000000	MOVQ $0x0, 0(SP)	
-      ex1.go:21	0x2c7a			440f117c2410		MOVUPS X15, 0x10(SP)	
-      ex1.go:22	0x2c80			48c7042402000000	MOVQ $0x2, 0(SP)	
-      ex1.go:23	0x2c88			48c744240802000000	MOVQ $0x2, 0x8(SP)	
-      ex1.go:23	0x2c91			488d0500000000		LEAQ 0(IP), AX		[3:7]R_PCREL:type.int64	
-      ex1.go:23	0x2c98			4889442410		MOVQ AX, 0x10(SP)	
-      ex1.go:23	0x2c9d			488d442408		LEAQ 0x8(SP), AX	
-      ex1.go:23	0x2ca2			4889442418		MOVQ AX, 0x18(SP)	
-      ex1.go:25	0x2ca7			488b6c2420		MOVQ 0x20(SP), BP	
-      ex1.go:25	0x2cac			4883c428		ADDQ $0x28, SP		
-      ex1.go:25	0x2cb0			c3			RET
+    TEXT main.ex1(SB) /go-interface-values/docs/02-interface-values/examples/ex1/ex1.go
+      ex1.go:19		0x454c40		4883ec28		SUBQ $0x28, SP		
+      ex1.go:19		0x454c44		48896c2420		MOVQ BP, 0x20(SP)	
+      ex1.go:19		0x454c49		488d6c2420		LEAQ 0x20(SP), BP	
+      ex1.go:20		0x454c4e		48c7042400000000	MOVQ $0x0, 0(SP)	
+      ex1.go:21		0x454c56		440f117c2410		MOVUPS X15, 0x10(SP)	
+      ex1.go:22		0x454c5c		48c7042402000000	MOVQ $0x2, 0(SP)	
+      ex1.go:23		0x454c64		48c744240802000000	MOVQ $0x2, 0x8(SP)	
+      ex1.go:23		0x454c6d		488d056c410000		LEAQ 0x416c(IP), AX	
+      ex1.go:23		0x454c74		4889442410		MOVQ AX, 0x10(SP)	
+      ex1.go:23		0x454c79		488d442408		LEAQ 0x8(SP), AX	
+      ex1.go:23		0x454c7e		4889442418		MOVQ AX, 0x18(SP)	
+      ex1.go:25		0x454c83		488b6c2420		MOVQ 0x20(SP), BP	
+      ex1.go:25		0x454c88		4883c428		ADDQ $0x28, SP		
+      ex1.go:25		0x454c8c		c3			RET
     ```
 
     Here are the lines on which we want to focus:
 
     ```assembly
-      ex1.go:20	0x2c72			48c7042400000000	MOVQ $0x0, 0(SP)	
-      ex1.go:21	0x2c7a			440f117c2410		MOVUPS X15, 0x10(SP)	
-      ex1.go:22	0x2c80			48c7042402000000	MOVQ $0x2, 0(SP)	
-      ex1.go:23	0x2c88			48c744240802000000	MOVQ $0x2, 0x8(SP)	
-      ex1.go:23	0x2c91			488d0500000000		LEAQ 0(IP), AX		[3:7]R_PCREL:type.int64	
-      ex1.go:23	0x2c98			4889442410		MOVQ AX, 0x10(SP)	
-      ex1.go:23	0x2c9d			488d442408		LEAQ 0x8(SP), AX	
-      ex1.go:23	0x2ca2			4889442418		MOVQ AX, 0x18(SP)	
+      ex1.go:20		0x454c4e		48c7042400000000	MOVQ $0x0, 0(SP)	
+      ex1.go:21		0x454c56		440f117c2410		MOVUPS X15, 0x10(SP)	
+      ex1.go:22		0x454c5c		48c7042402000000	MOVQ $0x2, 0(SP)	
+      ex1.go:23		0x454c64		48c744240802000000	MOVQ $0x2, 0x8(SP)	
+      ex1.go:23		0x454c6d		488d056c410000		LEAQ 0x416c(IP), AX	
+      ex1.go:23		0x454c74		4889442410		MOVQ AX, 0x10(SP)	
+      ex1.go:23		0x454c79		488d442408		LEAQ 0x8(SP), AX	
+      ex1.go:23		0x454c7e		4889442418		MOVQ AX, 0x18(SP)	
     ```
 
-1. `ex1.go:20	0x2c72			48c7042400000000	MOVQ $0x0, 0(SP)`
-    * `ex1.go:20`
+1. `ex1.go:20		0x454c4e		48c7042400000000	MOVQ $0x0, 0(SP)`
+    * `ex1.go:19`
         * This is the file and line number of the source code that corresponds to this line of assembly.
         * In this case it is line 20 from the file `ex1.go` -- `var x int64`.
-    * `0x2c72`
+    * `0x454c4e`
         * The program counter formatted as hexadecimal.
         * GNU's `objdump` tool formats this value as hexadecimal as well, but without the leading prefix `0x`.
     * `48c7042400000000`
@@ -119,7 +119,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     ![Fig.1](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig1.svg?sanitize=true&0)
 
-1. `ex1.go:21	0x2c7a			440f117c2410		MOVUPS X15, 0x10(SP)`
+1. `ex1.go:21		0x454c56		440f117c2410		MOVUPS X15, 0x10(SP)`
     * The assembly for line21, `var y interface{}`.
     * `MOVUPS X15 0x10(SP)`
         * `MOVUPS`
@@ -143,17 +143,17 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     Wait, why was `y` offset by 16 bytes when `x` is only eight bytes? Find out below! :smiley:
 
-1. `ex1.go:22	0x2c80			48c7042402000000	MOVQ $0x2, 0(SP)`
+1. `ex1.go:22		0x454c5c		48c7042402000000	MOVQ $0x2, 0(SP)`
     * The assembly for `x = 2`
-    * `MOVQ $0x2, 0x8(SP)` copies the literal value `2` to the memory address for the variable `x`.
+    * `MOVQ $0x2, 0(SP)` copies the literal value `2` to the memory address for the variable `x`.
 
     <br />
 
     ![Fig.3](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig3.svg?sanitize=true&0)
 
-1. `ex1.go:23	0x2c88			48c744240802000000	MOVQ $0x2, 0x8(SP)`
+1. `ex1.go:23		0x454c64		48c744240802000000	MOVQ $0x2, 0x8(SP)`
     * The assembly for `y = x`
-    * `MOVQ $0x2, 0x10(SP)` copies the literal value `2` to the memory address 16 bytes from `SP`.
+    * `MOVQ $0x2, 0x8(SP)` copies the literal value `2` to the memory address 8 bytes from `SP`.
     * Please note this is not a named variable, or rather not a named `int64`.
     * The Go compiler was able to determine that the only value ever assigned to `y` would be an `int64`, and so an extra eight bytes was allocated on the stack in order to store the `int64` value assigned to `y`.
 
@@ -161,7 +161,7 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     ![Fig.4](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig4.svg?sanitize=true&1)
 
-1. `ex1.go:23	0x2c91			488d0500000000		LEAQ 0(IP), AX		[3:7]R_PCREL:type.int64`
+1. `ex1.go:23		0x454c6d		488d056c410000		LEAQ 0x416c(IP), AX`
     * Still more assembly for `y = x`
     * `LEAQ`
         * The [`LEA`](https://www.felixcloutier.com/x86/lea) instruction stands for _load effective address_.
@@ -181,11 +181,10 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
             y := &x // LEAQ 0(SP) 0x8(SP)
             ```
 
-    * `LEAQ 0(IP), AX` stores the address of the instruction `[3:7]R_PCREL:type.int64` in register `AX`.
-    * The symbol [`R_PCREL`](https://developer.apple.com/documentation/kernel/scattered_relocation_info/1577780-r_pcrel) is specific to darwin and indicates the item containing the instruction uses program counter relative addressing.
+    * `LEAQ 0x416c(IP), AX` stores the address of the next CPI instruction in register `AX`.
     * Ultimately what is stored in `AX` is the address of `type.int64`, a global value that specifies the internal type for an `int64`.
 
-1. `ex1.go:23	0x2c88			48c744240802000000	MOVQ $0x2, 0x8(SP)`
+1. `ex1.go:23		0x454c74		4889442410		MOVQ AX, 0x10(SP)`
     * Still more assembly for `y = x`
     * `MOVQ AX, 0x10(SP)` copies the value in the `AX` register to the memory address offset from `SP` by 16 bytes.
     * This assigns the address of the global value `type.int64` to the interface's first `uintptr`, the one that points to the underlying type.
@@ -194,12 +193,12 @@ However I [have found](https://gophers.slack.com/archives/C029RQSEE/p16440336761
 
     ![Fig.5](https://raw.github.com/akutz/go-interface-values/main/docs/02-interface-values/images/09-on-the-stack-fig5.svg?sanitize=true&0)
 
-1. `ex1.go:23	0x2c9d			488d442408		LEAQ 0x8(SP), AX`
+1. `ex1.go:23		0x454c79		488d442408		LEAQ 0x8(SP), AX`
     * Still more assembly for `y = x`
     * `LEAQ 0x8(SP), AX` loads the address of the memory eight bytes from `SP` into the register `AX`.
     * The address loaded into `AX` points to the aforementioned, unnamed, temporary value the Go compiler created on the stack for the `y` interface to reference.
 
-1. `ex1.go:23	0x2ca2			4889442418		MOVQ AX, 0x18(SP)`
+1. `ex1.go:23		0x454c7e		4889442418		MOVQ AX, 0x18(SP)`
     * Still more assembly for `y = x`
     * `MOVQ AX, 0x18(SP)` copies the value in register `AX` into the address 24 bytes from `SP`.
     * This assigns the address of the unamed `int65` at `0x8(SP)` to the interface's second `uintptr`, the one that points to the underlying value.
