@@ -97,6 +97,6 @@
     <text x='1051' y='432' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[02]]></text>
     <text x='1051' y='446' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[01]]></text>
     <text x='1050' y='460' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[00 0(SP)]]></text>
-    <text x='792' y='40' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[heap]]></text>
+    <text x='792' y='40' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[data]]></text>
   </g>
 </svg>

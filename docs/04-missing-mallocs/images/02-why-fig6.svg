@@ -73,7 +73,7 @@
     <text x='748' y='222' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[local variables]]></text>
     <text x='643' y='152' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[type꞉]]></text>
     <text x='643' y='166' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[valu꞉]]></text>
-    <text x='792' y='40' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[heap]]></text>
+    <text x='792' y='40' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[data]]></text>
     <text x='1051' y='250' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[07]]></text>
     <text x='1051' y='264' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[06]]></text>
     <text x='1051' y='278' font-family='Courier' font-size='15' stroke='none' fill='#000000' ><![CDATA[05]]></text>
