@@ -39,16 +39,16 @@ func leak7(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var x int32 = 4096 // lem.leak7.m!=(escape|leak|move)
-		var p *int32 = &x  // lem.leak7.m!=(escape|leak|move)
-		var sink *int32    // lem.leak7.m!=(escape|leak|move)
-		sink = f(p)        // lem.leak7.m!=(escape|leak|move)
+		var x int32 = 4096 // lem.leak7.m!=(escapes|leaking|moved)
+		var p *int32 = &x  // lem.leak7.m!=(escapes|leaking|moved)
+		var sink *int32    // lem.leak7.m!=(escapes|leaking|moved)
+		sink = f(p)        // lem.leak7.m!=(escapes|leaking|moved)
 		_ = sink
 	}
 }
 ```
 
-For more information on this test framework please refer to its package documentation in [`./tests/lem/lem/doc.go`](../../tests/lem/lem/doc.go). Go ahead, I'll wait. No, seriously, I'll be right here.
+For more information on the lem test framework please refer [github.com/akutz/lem](https://github.com/akutz/lem). Go ahead, I'll wait. No, seriously, I'll be right here.
 
 ...
 

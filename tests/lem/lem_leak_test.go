@@ -116,7 +116,7 @@ func leak6(b *testing.B) {
 		b *int64, // lem.leak6.m=leaking param: b to result ~r[17] level=0
 		c []int32, // lem.leak6.m=leaking param: c to result ~r[28] level=0
 		d []*int64, // lem.leak6.m=leaking param: d to result ~r[39] level=0
-		e s, // lem.leak6.m!=(escape|leak|move)
+		e s, // lem.leak6.m!=(escapes|leaking|moved)
 		f *s, // lem.leak6.m=leaking param: f to result ~r(5|11) level=0
 	) (*int32, *int64, []int32, []*int64, s, *s) {
 		return a, b, c, d, e, f
@@ -124,12 +124,12 @@ func leak6(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		var (
-			a = new(int32)             // lem.leak6.m!=(escape|leak|move)
-			b = new(int64)             // lem.leak6.m!=(escape|leak|move)
-			c = make([]int32, 5, 5)    // lem.leak6.m!=(escape|leak|move)
-			d = make([]*int64, 10, 10) // lem.leak6.m!=(escape|leak|move)
-			e = s{a: 4096, b: 4096}    // lem.leak6.m!=(escape|leak|move)
-			f = new(s)                 // lem.leak6.m!=(escape|leak|move)
+			a = new(int32)             // lem.leak6.m=new\(int32\) does not escape
+			b = new(int64)             // lem.leak6.m=new\(int64\) does not escape
+			c = make([]int32, 5, 5)    // lem.leak6.m=make\(\[\]int32, 5, 5\) does not escape
+			d = make([]*int64, 10, 10) // lem.leak6.m=make\(\[\]\*int64, 10, 10\) does not escape
+			e = s{a: 4096, b: 4096}    // lem.leak6.m!=(escapes|leaking|moved)
+			f = new(s)                 // lem.leak6.m=new\(s\) does not escape
 		)
 		noop(a, b, c, d, e, f)
 	}
@@ -147,10 +147,10 @@ func leak7(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		var x int32 = 4096 // lem.leak7.m!=(escape|leak|move)
-		var p *int32 = &x  // lem.leak7.m!=(escape|leak|move)
-		var sink *int32    // lem.leak7.m!=(escape|leak|move)
-		sink = f(p)        // lem.leak7.m!=(escape|leak|move)
+		var x int32 = 4096 // lem.leak7.m!=(escapes|leaking|moved)
+		var p *int32 = &x  // lem.leak7.m!=(escapes|leaking|moved)
+		var sink *int32    // lem.leak7.m!=(escapes|leaking|moved)
+		sink = f(p)        // lem.leak7.m!=(escapes|leaking|moved)
 		_ = sink
 	}
 }

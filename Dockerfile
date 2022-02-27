@@ -76,3 +76,6 @@ WORKDIR /go-interface-values/
 
 # Copy the current repo into the working directory.
 COPY . /go-interface-values/
+
+# Cache the project's Go modules in the Docker container.
+RUN go mod download

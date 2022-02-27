@@ -19,7 +19,7 @@ package lem_test
 import (
 	"testing"
 
-	"go-interface-values/tests/lem/lem"
+	"github.com/akutz/lem"
 )
 
 var lemFuncs = map[string]func(*testing.B){}
@@ -27,8 +27,5 @@ var lemFuncs = map[string]func(*testing.B){}
 func TestLem(t *testing.T) {
 	lem.SetBenchmem("true")
 	lem.SetBenchtime("1000x")
-	lem.B{
-		Benchmarks:  lemFuncs,
-		IncludeDirs: []string{lem.MyDirectory()},
-	}.Run(t)
+	lem.RunWithBenchmarks(t, lemFuncs)
 }

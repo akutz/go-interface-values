@@ -194,7 +194,7 @@ func escape10(b *testing.B) {
 		var y int64
 		x = 255
 		y = 256
-		sink = x // lem.escape10.m!=(escape|leak|move)
+		sink = x // lem.escape10.m=x escapes to heap
 		sink = y // lem.escape10.m=y escapes to heap
 	}
 	_ = sink
@@ -230,7 +230,7 @@ func escape12(b *testing.B) {
 		b *int64, // lem.escape12.m=leaking param: b to result ~r[17] level=0
 		c []int32, // lem.escape12.m=leaking param: c to result ~r[28] level=0
 		d []*int64, // lem.escape12.m=leaking param: d to result ~r[39] level=0
-		e s, // lem.escape12.m!=(escape|leak|move)
+		e s, // lem.escape12.m!=(escapes|leaking|moved)
 		f *s, // lem.escape12.m=leaking param: f to result ~r(5|11) level=0
 	) (*int32, *int64, []int32, []*int64, s, *s) {
 		return a, b, c, d, e, f
@@ -243,7 +243,7 @@ func escape12(b *testing.B) {
 			b = new(int64)             // lem.escape12.m=new\(int64\) does not escape
 			c = make([]int32, 5, 5)    // lem.escape12.m=make\(\[\]int32, 5, 5\) does not escape
 			d = make([]*int64, 10, 10) // lem.escape12.m=make\(\[\]\*int64, 10, 10\) does not escape
-			e = s{a: 4096, b: 4096}    // lem.escape12.m!=(escape|leak|move)
+			e = s{a: 4096, b: 4096}    // lem.escape12.m!=(escapes|leaking|moved)
 			f = new(s)                 // lem.escape12.m=new\(s\) does not escape
 		)
 		sink, _, _, _, _, _ = noop(a, b, c, d, e, f)
